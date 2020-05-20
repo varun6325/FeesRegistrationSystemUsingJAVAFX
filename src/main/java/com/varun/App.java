@@ -27,12 +27,6 @@ public class App extends Application {
         stage.sizeToScene();
     }
 
-    static public void setRoot(String fxml) throws IOException {
-        scene.setRoot(Utils.loadFXML(fxml));
-        App.stage.sizeToScene();
-
-    }
-
     static public void setRoot(Parent parent){
         scene.setRoot(parent);
         App.stage.sizeToScene();
