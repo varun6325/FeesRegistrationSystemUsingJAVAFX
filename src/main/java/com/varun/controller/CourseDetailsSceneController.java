@@ -1,15 +1,16 @@
 package com.varun.controller;
 
 import com.varun.App;
+import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.fxmlmodels.CourseTableElem;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Pair;
 
 import java.io.IOException;
 
@@ -39,7 +40,7 @@ public class CourseDetailsSceneController {
                     CourseTableElem rowData = row.getItem();
                     System.out.println("Double click on: "+rowData.getCourseName());
                     try {
-                        AddUpdateCourseSceneController.display(rowData);
+                        AddUpdateCourseSceneController.display(ParameterStrings.courseDetailsString, courseTableView.getScene(), rowData);
                     }catch(IOException ex){
                         System.out.println(ex.getMessage());
                     }
@@ -49,10 +50,24 @@ public class CourseDetailsSceneController {
         });
     }
 
-    public static void display() throws IOException {
+    public static void display(String previousSceneName, Scene previousScene) throws IOException {
+        while(!Utils.sceneStack.empty() && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.homeString))
+            Utils.sceneStack.pop();
+        if(Utils.sceneStack.empty() && previousSceneName.equals(ParameterStrings.homeString))
+            Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         Parent parent = Utils.loadFXML("CourseDetailsScene");
-        App.setRoot(parent);
+        Scene newScene = new Scene(parent);
+        newScene.setRoot(parent);
+        App.setScene(newScene);
 
+    }
+    @FXML
+    private void onBackButtonClicked(){
+        Utils.backButtonFunctionality();
+    }
+    @FXML
+    private void onHomeButtonClicked() throws IOException{
+        Utils.homeButtonFunctionality();
     }
 
 }

@@ -27,10 +27,14 @@ public class App extends Application {
         stage.sizeToScene();
     }
 
-    static public void setRoot(Parent parent){
-        scene.setRoot(parent);
-        App.stage.sizeToScene();
+    static public void setScene(Scene scene){
+        stage.setScene(scene);
+        stage.sizeToScene();
     }
+//    static public void setRoot(Parent parent){
+//        scene.setRoot(parent);
+//        App.stage.sizeToScene();
+//    }
     public static void main(String[] args) {
         launch();
     }

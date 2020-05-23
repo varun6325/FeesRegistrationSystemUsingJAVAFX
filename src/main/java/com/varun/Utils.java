@@ -1,20 +1,23 @@
 package com.varun;
 
+import com.varun.controller.HomeSceneController;
 import com.varun.fxmlmodels.CourseTableElem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.util.Stack;
 
 public class Utils {
-    private static Stack<Scene> sceneStack = new Stack<Scene>();
+    public static Stack<Pair<String, Scene>> sceneStack = new Stack<>();
     static ObservableList<CourseTableElem> courses = null;
-    public static ObservableList<CourseTableElem> getTestCourseList(){
-        if(courses == null) {
+
+    public static ObservableList<CourseTableElem> getTestCourseList() {
+        if (courses == null) {
             courses = FXCollections.observableArrayList();
             courses.add(new CourseTableElem(1, "course 1", "desc 1", 2500.0));
             courses.add(new CourseTableElem(2, "course 2", "desc 2", 3500.0));
@@ -31,10 +34,21 @@ public class Utils {
         return fxmlLoader.load();
     }
 
-    static void insertToSceneStack(Scene scene){
-        sceneStack.push(scene);
+//    public static void insertToSceneStack(Scene scene) {
+//        sceneStack.push(scene);
+//    }
+//
+//    public static Scene removeFromSceneStack() {
+//        return sceneStack.pop();
+//    }
+
+    public static void backButtonFunctionality() {
+        Pair pair = Utils.sceneStack.pop();
+        App.setScene((Scene)pair.getValue());
     }
-    static Scene removeFromSceneStack(){
-        return sceneStack.pop();
+
+    public static void homeButtonFunctionality() throws IOException{
+        Utils.sceneStack.clear();
+        HomeSceneController.display();
     }
 }

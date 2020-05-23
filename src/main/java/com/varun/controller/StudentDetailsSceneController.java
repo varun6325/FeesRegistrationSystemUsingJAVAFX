@@ -1,17 +1,20 @@
 package com.varun.controller;
 
 import com.varun.App;
+import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.fxmlmodels.CourseTableElem;
 import com.varun.fxmlmodels.StudentTableElem;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Pair;
 
 import java.io.IOException;
 
@@ -35,8 +38,13 @@ public class StudentDetailsSceneController {
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
-    public static void display() throws IOException {
+    public static void display(String previousSceneName, Scene previousScene) throws IOException {
+        while(!Utils.sceneStack.empty() && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.homeString))
+            Utils.sceneStack.pop();
+        if(Utils.sceneStack.empty() && previousSceneName.equals(ParameterStrings.homeString))
+            Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         Parent parent = Utils.loadFXML("StudentDetailsScene");
-        App.setRoot(parent);
+        Scene newScene = new Scene(parent);
+        App.setScene(newScene);
     }
 }
