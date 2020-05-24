@@ -12,12 +12,12 @@ public class CourseDBModel {
         this.courseName = courseName;
     }
 
-    public String getCourseDescription() {
-        return courseDescription;
+    public String getcourseDesc() {
+        return courseDesc;
     }
 
-    public void setCourseDescription(String courseDescription) {
-        this.courseDescription = courseDescription;
+    public void setcourseDesc(String courseDesc) {
+        this.courseDesc = courseDesc;
     }
 
     public Double getCourseFees() {
@@ -37,7 +37,7 @@ public class CourseDBModel {
     }
 
     private String courseName;
-    private String courseDescription;
+    private String courseDesc;
     private Double courseFees;
     private int courseId;
 }
