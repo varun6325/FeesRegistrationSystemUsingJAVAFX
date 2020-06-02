@@ -3,6 +3,7 @@ package com.varun.controller;
 import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
+import com.varun.db.managers.CourseManager;
 import com.varun.fxmlmodels.CourseTableElem;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -29,7 +30,7 @@ public class CourseDetailsSceneController {
         courseName.setCellValueFactory(new PropertyValueFactory<>("courseName"));
         courseDesc.setCellValueFactory(new PropertyValueFactory<>("courseDesc"));
         courseFees.setCellValueFactory(new PropertyValueFactory<>("courseFees"));
-        courseTableView.setItems(Utils.getTestCourseList());
+        courseTableView.setItems(CourseManager.getCourseTableElemList());
         courseTableView.setPlaceholder(new Label("No courses present in the system to display"));
         courseTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         //courseTableView.setOnMouseClicked(this::handleMouseClickOnRow);

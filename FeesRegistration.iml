@@ -11,8 +11,11 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping />
-        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/java/META-INF/persistence.xml" />
+        <datasource-mapping>
+          <factory-entry name="FeesRegistrationPersistentUnit" />
+          <factory-entry name="NewPersistenceUnit" value="c61c66dc-160d-44be-a210-e26d27dc40cb" />
+        </datasource-mapping>
+        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />
       </configuration>
     </facet>
   </component>
