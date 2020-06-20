@@ -18,7 +18,7 @@ public class RegistrationEntity {
     private StudentEntity studentByStudentId;
     private CourseEntity courseByCourseId;
 
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "registrationId", insertable=false, updatable=false)
     public int getRegistrationId() {
         return registrationId;

@@ -16,7 +16,7 @@ public class InstallmentEntity {
     private String installmentPaidDate;
     private RegistrationEntity registrationByRegistrationId;
 
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "installmentId", insertable=false, updatable=false)
     public int getInstallmentId() {
         return installmentId;

@@ -17,7 +17,7 @@ public class StudentEntity {
     private String studentPhNo;
     private Collection<RegistrationEntity> registrationsByStudentId;
 
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "studentId", insertable=false, updatable=false)
     public int getStudentId() {
         return studentId;

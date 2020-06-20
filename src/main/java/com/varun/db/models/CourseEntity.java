@@ -14,7 +14,7 @@ public class CourseEntity {
     private BigDecimal courseFees;
     private Collection<RegistrationEntity> registrationsByCourseId;
 
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "courseId", insertable=false, updatable=false)
     public int getCourseId() {
         return courseId;
@@ -69,6 +69,16 @@ public class CourseEntity {
     public int hashCode() {
 
         return Objects.hash(courseId, courseName, courseDesc, courseFees);
+    }
+
+    @Override
+    public String toString() {
+        return "CourseEntity{" +
+                "courseId=" + courseId +
+                ", courseName='" + courseName + '\'' +
+                ", courseDesc='" + courseDesc + '\'' +
+                ", courseFees=" + courseFees +
+                '}';
     }
 
     @OneToMany(mappedBy = "courseByCourseId")

@@ -1,5 +1,6 @@
 package com.varun.db.managers;
 
+import com.varun.db.DBUtils;
 import com.varun.db.models.CourseEntity;
 import com.varun.fxmlmodels.CourseTableElem;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ public class CourseManager {
         try {
             courseEntities = entityManager.createQuery("Select a from CourseEntity a", CourseEntity.class).getResultList();
         }catch(Exception ex){
+            System.out.println(ex);
             courseEntities = null;
         }finally {
             if(entityManager != null)
@@ -32,10 +34,60 @@ public class CourseManager {
         if(courseEntities != null){
             courses = FXCollections.observableArrayList();
             for(CourseEntity courseEntity : courseEntities){
-                CourseTableElem courseTableElem = new CourseTableElem(courseEntity.getCourseId(), courseEntity.getCourseName(), courseEntity.getCourseDesc(), courseEntity.getCourseFees().doubleValue());
-                courses.add(courseTableElem);
+                courses.add(DBUtils.getCourseTableElemFromCourseEntity(courseEntity));
             }
         }
         return courses;
+    }
+    public static boolean addCourse(CourseEntity courseEntity){
+        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.persist(courseEntity);
+            entityManager.getTransaction().commit();
+            System.out.println("Adding course successful : " + courseEntity.toString());
+        }catch(Exception ex){
+            System.out.println(ex);
+            if(entityManager != null && entityManager.getTransaction().isActive())
+                entityManager.getTransaction().rollback();
+                return false;
+        }finally {
+            if(entityManager != null)
+                entityManager.close();
+        }
+        return true;
+    }
+    public static CourseEntity updateCourse(CourseEntity courseEntity){
+        CourseEntity res;
+        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            res = entityManager.merge(courseEntity);
+            entityManager.getTransaction().commit();
+            System.out.println("Updating course successful : " + courseEntity.toString());
+        }catch(Exception ex){
+            System.out.println(ex);
+            res=null;
+            if(entityManager != null && entityManager.getTransaction().isActive())
+                entityManager.getTransaction().rollback();
+        }finally {
+            if(entityManager != null)
+                entityManager.close();
+        }
+        return res;
+    }
+    public static CourseEntity getCourseById(int id){
+        CourseEntity res = null;
+        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        try {
+            res = entityManager.find(CourseEntity.class, id);
+        }catch(Exception ex){
+            System.out.println(ex);
+            res = null;
+        }finally {
+            if(entityManager != null)
+                entityManager.close();
+        }
+        return res;
     }
 }

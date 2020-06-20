@@ -70,5 +70,9 @@ public class CourseDetailsSceneController {
     private void onHomeButtonClicked() throws IOException{
         Utils.homeButtonFunctionality();
     }
+    @FXML
+    private void onAddCourseButtonClicked() throws IOException{
+        AddUpdateCourseSceneController.display(ParameterStrings.courseDetailsString, courseTableView.getScene(), null);
+    }
 
 }
