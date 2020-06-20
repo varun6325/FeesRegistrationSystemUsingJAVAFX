@@ -2,6 +2,7 @@ package com.varun;
 
 import com.varun.controller.HomeSceneController;
 import com.varun.fxmlmodels.CourseTableElem;
+import com.varun.fxmlmodels.InstallmentTableElem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -10,11 +11,13 @@ import javafx.scene.Scene;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Stack;
 
 public class Utils {
     public static Stack<Pair<String, Scene>> sceneStack = new Stack<>();
     static ObservableList<CourseTableElem> courses = null;
+    static ObservableList<InstallmentTableElem> installmentTableElems = null;
 
     public static ObservableList<CourseTableElem> getTestCourseList() {
         if (courses == null) {
@@ -27,6 +30,18 @@ public class Utils {
             courses.add(new CourseTableElem(6, "course 6", "desc 6", 2300.0));
         }
         return courses;
+    }
+    public static ObservableList<InstallmentTableElem> getTestInstallmentTableElem() {
+        if (installmentTableElems == null) {
+            installmentTableElems = FXCollections.observableArrayList();
+            installmentTableElems.add(new InstallmentTableElem(1, 1000.0, true, new Date()));
+            installmentTableElems.add(new InstallmentTableElem(1, 1500.0, false, new Date()));
+            installmentTableElems.add(new InstallmentTableElem(1, 1200.0, true, new Date()));
+            installmentTableElems.add(new InstallmentTableElem(1, 1100.0, true, new Date()));
+            installmentTableElems.add(new InstallmentTableElem(1, 1300.0, false, new Date()));
+            System.out.println(installmentTableElems.size());
+        }
+        return installmentTableElems;
     }
 
     public static Parent loadFXML(String fxml) throws IOException {
