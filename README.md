@@ -1,4 +1,4 @@
-# FeesRegistrationSystemUsingJAVAFX
+# FeesRegistration System Using JAVAFX
 ## Tools required: 
 Java 11, maven
 
