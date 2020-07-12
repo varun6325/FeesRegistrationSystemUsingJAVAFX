@@ -11,7 +11,13 @@ import javafx.scene.Scene;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Stack;
 
 public class Utils {
@@ -65,5 +71,25 @@ public class Utils {
     public static void homeButtonFunctionality() throws IOException{
         Utils.sceneStack.clear();
         HomeSceneController.display();
+    }
+    public static Calendar getCalendar(Date date) {
+        Calendar cal = Calendar.getInstance(Locale.US);
+        cal.setTime(date);
+        return cal;
+    }
+    public static final LocalDate getLocalDateFromString (String dateString){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(dateString, formatter);
+        return localDate;
+    }
+    public static final Date getDateFromLocalDate (LocalDate localDate){
+        Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
+        Date date = Date.from(instant);
+        return date;
+    }
+    public static final java.sql.Date getSqlDateFromLocalDate (LocalDate localDate){
+        java.util.Date utilDate = Utils.getDateFromLocalDate(localDate);
+        java.sql.Date sd = new java.sql.Date(utilDate.getTime());
+        return sd;
     }
 }

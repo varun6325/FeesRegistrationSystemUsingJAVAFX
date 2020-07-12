@@ -3,7 +3,6 @@ package com.varun.controller;
 import com.varun.App;
 import com.varun.Utils;
 import com.varun.db.models.RegistrationEntity;
-import com.varun.fxmlmodels.InstallmentTableElem;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +15,7 @@ import java.io.IOException;
 
 public class RegistrationDetailsController {
 
+    private InstallmentDetailsController installmentDetailsController;
     private RegistrationEntity registrationEntity;
     @FXML
     private Label registrationNameLabel;
@@ -50,15 +50,12 @@ public class RegistrationDetailsController {
         registrationGridPane.add(registrationDateLabel, 2, 2, 1, 1);
         registrationGridPane.add(registrationDateTextField, 3, 2, 1, 1);
         //TODO: the above needs to come from AddUpdateStudentController
-        installmentsTitledPane.setContent(InstallmentDetailsController.getParentForInstallment(Utils.getTestInstallmentTableElem()));
-    }
-
-
-    public static Parent getParentForRegistration(RegistrationEntity registrationEntity) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("RegistrationDetails" + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("InstallmentDetails" + ".fxml"));
         Parent parent = fxmlLoader.load();
-        ((RegistrationDetailsController)(fxmlLoader.getController())).setRegistrationEntity(registrationEntity);
-        return parent;
+        installmentDetailsController = (InstallmentDetailsController)(fxmlLoader.getController());
+        installmentDetailsController.setInstallmentTableContents(Utils.getTestInstallmentTableElem());
+        installmentsTitledPane.setContent(parent);
+//        installmentsTitledPane.setContent(InstallmentDetailsController.getParentForInstallment(Utils.getTestInstallmentTableElem()));
     }
 
     public void setRegistrationEntity(RegistrationEntity registrationEntity) { // Setting the client-object in ClientViewController

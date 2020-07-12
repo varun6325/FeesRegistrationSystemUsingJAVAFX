@@ -27,7 +27,7 @@ public class AddUpdateCourseSceneController {
     private CourseTableElem courseTableElem;
 
 
-    public void setCourseTableElem(CourseTableElem courseTableElem) {
+    private void setCourseTableElem(CourseTableElem courseTableElem) {
         this.courseTableElem = courseTableElem;
         if(courseTableElem != null) {
             courseIdTextField.setText(String.valueOf(courseTableElem.getCourseId()));

@@ -12,12 +12,15 @@ public class StudentEntity {
     private String studentFName;
     private String studentMName;
     private String studentLName;
-    private Integer studentAge;
-    private Date studentDataOfBirth;
     private String studentPhNo;
-    private Collection<RegistrationEntity> registrationsByStudentId;
 
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Collection<RegistrationEntity> registrationsByStudentId;
+    private Date studentDateOfBirth;
+    private String studentAddress;
+    private String studentEmail;
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "studentId", insertable=false, updatable=false)
     public int getStudentId() {
         return studentId;
@@ -58,26 +61,6 @@ public class StudentEntity {
     }
 
     @Basic
-    @Column(name = "studentAge")
-    public Integer getStudentAge() {
-        return studentAge;
-    }
-
-    public void setStudentAge(Integer studentAge) {
-        this.studentAge = studentAge;
-    }
-
-    @Basic
-    @Column(name = "studentDataOfBirth")
-    public Date getStudentDataOfBirth() {
-        return studentDataOfBirth;
-    }
-
-    public void setStudentDataOfBirth(Date studentDataOfBirth) {
-        this.studentDataOfBirth = studentDataOfBirth;
-    }
-
-    @Basic
     @Column(name = "studentPhNo")
     public String getStudentPhNo() {
         return studentPhNo;
@@ -87,6 +70,15 @@ public class StudentEntity {
         this.studentPhNo = studentPhNo;
     }
 
+    @Basic
+    @Column(name = "studentEmail")
+    public String getStudentEmail() {
+        return studentEmail;
+    }
+
+    public void setStudentEmail(String studentEmail) {
+        this.studentEmail = studentEmail;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,15 +88,17 @@ public class StudentEntity {
                 Objects.equals(studentFName, that.studentFName) &&
                 Objects.equals(studentMName, that.studentMName) &&
                 Objects.equals(studentLName, that.studentLName) &&
-                Objects.equals(studentAge, that.studentAge) &&
-                Objects.equals(studentDataOfBirth, that.studentDataOfBirth) &&
-                Objects.equals(studentPhNo, that.studentPhNo);
+                Objects.equals(studentPhNo, that.studentPhNo) &&
+                Objects.equals(registrationsByStudentId, that.registrationsByStudentId) &&
+                Objects.equals(studentDateOfBirth, that.studentDateOfBirth) &&
+                Objects.equals(studentEmail, that.studentEmail) &&
+                Objects.equals(studentAddress, that.studentAddress);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(studentId, studentFName, studentMName, studentLName, studentAge, studentDataOfBirth, studentPhNo);
+        return Objects.hash(studentId, studentFName, studentMName, studentLName, studentPhNo, registrationsByStudentId, studentDateOfBirth, studentEmail, studentAddress);
     }
 
     @OneToMany(mappedBy = "studentByStudentId")
@@ -114,5 +108,39 @@ public class StudentEntity {
 
     public void setRegistrationsByStudentId(Collection<RegistrationEntity> registrationsByStudentId) {
         this.registrationsByStudentId = registrationsByStudentId;
+    }
+
+    @Basic
+    @Column(name = "studentDateOfBirth")
+    public Date getStudentDateOfBirth() {
+        return studentDateOfBirth;
+    }
+
+    public void setStudentDateOfBirth(Date studentDateOfBirth) {
+        this.studentDateOfBirth = studentDateOfBirth;
+    }
+
+    @Override
+    public String toString() {
+        return "StudentEntity{" +
+                "studentId=" + studentId +
+                ", studentFName='" + studentFName + '\'' +
+                ", studentMName='" + studentMName + '\'' +
+                ", studentLName='" + studentLName + '\'' +
+                ", studentPhNo='" + studentPhNo + '\'' +
+                ", studentDateOfBirth=" + studentDateOfBirth +
+                ", studentAddress='" + studentAddress + '\'' +
+                ", studentAddress='" + studentEmail + '\'' +
+                '}';
+    }
+
+    @Basic
+    @Column(name = "studentAddress")
+    public String getStudentAddress() {
+        return studentAddress;
+    }
+
+    public void setStudentAddress(String studentAddress) {
+        this.studentAddress = studentAddress;
     }
 }

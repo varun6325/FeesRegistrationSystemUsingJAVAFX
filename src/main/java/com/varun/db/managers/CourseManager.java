@@ -15,8 +15,9 @@ import java.util.List;
 public class CourseManager {
     public static List<CourseEntity> getCourseDBList(){
         List<CourseEntity> courseEntities = null;
-        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        EntityManager entityManager = null;
         try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
             courseEntities = entityManager.createQuery("Select a from CourseEntity a", CourseEntity.class).getResultList();
         }catch(Exception ex){
             System.out.println(ex);
@@ -40,8 +41,9 @@ public class CourseManager {
         return courses;
     }
     public static boolean addCourse(CourseEntity courseEntity){
-        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        EntityManager entityManager = null;
         try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
             entityManager.getTransaction().begin();
             entityManager.persist(courseEntity);
             entityManager.getTransaction().commit();
@@ -59,8 +61,9 @@ public class CourseManager {
     }
     public static CourseEntity updateCourse(CourseEntity courseEntity){
         CourseEntity res;
-        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        EntityManager entityManager = null;
         try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
             entityManager.getTransaction().begin();
             res = entityManager.merge(courseEntity);
             entityManager.getTransaction().commit();
@@ -78,8 +81,9 @@ public class CourseManager {
     }
     public static CourseEntity getCourseById(int id){
         CourseEntity res = null;
-        EntityManager entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        EntityManager entityManager = null;
         try {
+            entityManager =  PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
             res = entityManager.find(CourseEntity.class, id);
         }catch(Exception ex){
             System.out.println(ex);

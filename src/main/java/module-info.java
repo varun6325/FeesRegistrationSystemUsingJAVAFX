@@ -6,7 +6,6 @@ module com.varun {
     requires org.hibernate.orm.core;
     requires org.hibernate.commons.annotations;
     requires java.naming;
-
     opens com.varun.controller to javafx.fxml;
     opens com.varun.fxmlmodels to javafx.base;
 

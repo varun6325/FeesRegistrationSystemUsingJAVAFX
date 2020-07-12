@@ -40,6 +40,6 @@ public class HomeSceneController {
         NotificationSceneController.display(ParameterStrings.homeString, studentDetailsButton.getScene());
     }
     public void onAddStudentButtonClicked() throws IOException{
-        AddUpdateStudentSceneController.display(ParameterStrings.homeString, studentDetailsButton.getScene());
+        AddUpdateStudentSceneController.display(ParameterStrings.homeString, studentDetailsButton.getScene(), -1);
     }
 }

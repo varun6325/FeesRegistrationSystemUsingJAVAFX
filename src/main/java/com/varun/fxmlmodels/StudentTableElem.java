@@ -4,17 +4,27 @@ public class StudentTableElem {
     int studentId;
     String studentName;
     int studentAge;
-    String studentAddress;
+    String studentEmail;
+    String studentPhNo;
+
+    public String getStudentPhNo() {
+        return studentPhNo;
+    }
+
+    public void setStudentPhNo(String studentPhNo) {
+        this.studentPhNo = studentPhNo;
+    }
 
     public int getStudentId() {
         return studentId;
     }
 
-    public StudentTableElem(int studentId, String studentName, int studentAge, String studentAddress) {
+    public StudentTableElem(int studentId, String studentName, int studentAge, String studentPhNo, String studentEmail) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.studentAge = studentAge;
-        this.studentAddress = studentAddress;
+        this.studentPhNo = studentPhNo;
+        this.studentEmail = studentEmail;
     }
 
     public void setStudentId(int studentId) {
@@ -37,11 +47,22 @@ public class StudentTableElem {
         this.studentAge = studentAge;
     }
 
-    public String getStudentAddress() {
-        return studentAddress;
+    public String getStudentEmail() {
+        return studentEmail;
     }
 
-    public void setStudentAddress(String studentAddress) {
-        this.studentAddress = studentAddress;
+    public void setStudentEmail(String studentEmail) {
+        this.studentEmail = studentEmail;
+    }
+
+    @Override
+    public String toString() {
+        return "StudentTableElem{" +
+                "studentId=" + studentId +
+                ", studentName='" + studentName + '\'' +
+                ", studentAge=" + studentAge +
+                ", studentAddress='" + studentEmail + '\'' +
+                ", studentPhNo='" + studentPhNo + '\'' +
+                '}';
     }
 }

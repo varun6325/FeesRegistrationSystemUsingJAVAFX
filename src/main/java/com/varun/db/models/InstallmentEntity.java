@@ -11,12 +11,15 @@ public class InstallmentEntity {
     private int installmentId;
     private int installmentNo;
     private BigDecimal intallmentAmount;
-    private String instalmentIsDone;
+    private boolean instalmentIsDone;
     private Date installmentDueDate;
     private String installmentPaidDate;
     private RegistrationEntity registrationByRegistrationId;
 
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "installmentId", insertable=false, updatable=false)
     public int getInstallmentId() {
         return installmentId;
@@ -47,12 +50,12 @@ public class InstallmentEntity {
     }
 
     @Basic
-    @Column(name = "instalmentIsDone")
-    public String getInstalmentIsDone() {
+    @Column(name = "instalmentIsDone", columnDefinition = "TINYINT")
+    public boolean isInstalmentIsDone() {
         return instalmentIsDone;
     }
 
-    public void setInstalmentIsDone(String instalmentIsDone) {
+    public void setInstalmentIsDone(boolean instalmentIsDone) {
         this.instalmentIsDone = instalmentIsDone;
     }
 

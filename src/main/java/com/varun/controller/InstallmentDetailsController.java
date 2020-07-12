@@ -40,11 +40,11 @@ public class InstallmentDetailsController {
 
         //TODO: this list needs to come from RegistrationDetailsController
     }
-    public static Parent getParentForInstallment(ObservableList<InstallmentTableElem> installmentTableElems) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("InstallmentDetails" + ".fxml"));
-        Parent parent = fxmlLoader.load();
-        ((InstallmentDetailsController)(fxmlLoader.getController())).setInstallmentTableContents(installmentTableElems);
-        return parent;
-    }
+//    public static Parent getParentForInstallment(ObservableList<InstallmentTableElem> installmentTableElems) throws IOException {
+//        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("InstallmentDetails" + ".fxml"));
+//        Parent parent = fxmlLoader.load();
+//        ((InstallmentDetailsController)(fxmlLoader.getController())).setInstallmentTableContents(installmentTableElems);
+//        return parent;
+//    }
 
 }

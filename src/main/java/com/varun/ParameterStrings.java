@@ -7,4 +7,6 @@ public class ParameterStrings {
     public static final String addUpdateCourseString = "AddUpdateCourse";
     public static final String addUpdateStudentString = "AddUpdateStudent";
     public static final String notificationString = "Notification";
+    public static final String addUpdateRegistrationString = "RegistrationDetails";
+    public static final String addUpdateInstallmentString = "InstallmentDetails";
 }
