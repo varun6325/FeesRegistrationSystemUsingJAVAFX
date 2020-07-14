@@ -4,6 +4,7 @@ import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.db.DBUtils;
+import com.varun.db.managers.RegistrationManager;
 import com.varun.db.managers.StudentManager;
 import com.varun.db.models.RegistrationEntity;
 import com.varun.db.models.StudentEntity;
@@ -13,26 +14,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import org.w3c.dom.Text;
+import org.hibernate.LazyInitializationException;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 public class AddUpdateStudentSceneController {
 
-    private int studentId = -1;
+    private StudentEntity studentEntity;
     @FXML TableView registrationTableView;
     @FXML private ScrollPane scrollPane;
     @FXML private Label studentIdLabel;
@@ -69,7 +67,8 @@ public class AddUpdateStudentSceneController {
                     RegistrationTableElem rowData = row.getItem();
                     System.out.println("Double click on Registration : "+rowData.getRegistrationId());
                     try {
-                        AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentId, rowData.getRegistrationId());
+                        RegistrationEntity registrationEntity = RegistrationManager.getRegistrationById(rowData.getRegistrationId());
+                        AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentEntity, registrationEntity);
                     }catch(IOException ex){
                         System.out.println(ex.getMessage());
                     }
@@ -80,8 +79,8 @@ public class AddUpdateStudentSceneController {
     }
 
     private void fillScene() throws IOException{
-        if(studentId != -1){
-            StudentEntity studentEntity = StudentManager.getStudentByIdWithRegistrations(studentId);
+        if(studentEntity != null){
+            //student already exists and is here to be modified
             studentIdLabel.setText(Integer.toString(studentEntity.getStudentId()));
             studentFNameTextField.setText(studentEntity.getStudentFName());
             studentMNameTextField.setText(studentEntity.getStudentMName());
@@ -91,8 +90,17 @@ public class AddUpdateStudentSceneController {
             studentDateOfBirthDatePicker.setValue(localDate);
             studentPhNoTextField.setText(studentEntity.getStudentPhNo());
             studentEmailTextField.setText(studentEntity.getStudentEmail());
-            List<RegistrationEntity> registrationEntities = (List)studentEntity.getRegistrationsByStudentId();
-            Iterator<RegistrationEntity> registrationEntityIterator = registrationEntities.iterator();
+            List<RegistrationEntity> registrationEntities;
+            Iterator<RegistrationEntity> registrationEntityIterator;
+            try {
+                registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
+                registrationEntityIterator = registrationEntities.iterator();
+            }catch(LazyInitializationException ex){
+                System.out.println("Exception raised : " + ex.getMessage());
+                studentEntity = StudentManager.getStudentByEntityWithRegistrations(studentEntity);
+                registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
+                registrationEntityIterator = registrationEntities.iterator();
+            }
             ObservableList<RegistrationTableElem> registrationTableElems = FXCollections.observableArrayList();
             while(registrationEntityIterator.hasNext()){
                 RegistrationTableElem registrationTableElem = DBUtils.getRegistrationTableElemFromRegistrationEntity(registrationEntityIterator.next());
@@ -100,19 +108,20 @@ public class AddUpdateStudentSceneController {
             }
             registrationTableView.setItems(registrationTableElems);
         }else{
+            // new student, so don't show addRegistration button and registrations table view.
             mainVBox.getChildren().remove(addRegistrationButton);
             mainVBox.getChildren().remove(registrationTableView);
         }
     }
 
-    public static AddUpdateStudentSceneController display(String previousSceneName, Scene previousScene, int studentId) throws IOException {
+    public static AddUpdateStudentSceneController display(String previousSceneName, Scene previousScene, StudentEntity studentEntity) throws IOException {
         while( Utils.sceneStack.size() > 1 && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.studentDetailsString))
             Utils.sceneStack.pop();
         Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateStudentScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
         AddUpdateStudentSceneController addUpdateStudentSceneController = (AddUpdateStudentSceneController)(fxmlLoader.getController());
-        addUpdateStudentSceneController.setStudentId(studentId);
+        addUpdateStudentSceneController.setStudentEntity(studentEntity);
         addUpdateStudentSceneController.fillScene();
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
@@ -123,14 +132,15 @@ public class AddUpdateStudentSceneController {
     //this function will only be called when a student already exists in the db
     @FXML
     private void onAddRegistrationButtonClicked() throws IOException{
-        AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentId,-1);
+        AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentEntity,null);
     }
     @FXML
     private void onSubmitButtonClicked() throws IOException{
         //TODO: add validation of the text fields
         //TODO: add confirmation box
         System.out.println("onSubmit button clicked");
-        StudentEntity studentEntity = new StudentEntity();
+        if(studentEntity == null)
+            studentEntity = new StudentEntity(); // student needs to be inserted - so create a new object
         studentEntity.setStudentFName(studentFNameTextField.getText());
         studentEntity.setStudentMName(studentMNameTextField.getText());
         studentEntity.setStudentLName(studentLNameTextField.getText());
@@ -139,7 +149,7 @@ public class AddUpdateStudentSceneController {
         studentEntity.setStudentAddress(studentAddressTextField.getText());
         studentEntity.setStudentEmail(studentEmailTextField.getText());
         studentEntity.setStudentPhNo(studentPhNoTextField.getText());
-        if(studentId == -1){
+        if(studentEntity == null){
             //inserting new student
             System.out.println("adding student");
             boolean ret = StudentManager.addStudent(studentEntity);
@@ -149,7 +159,6 @@ public class AddUpdateStudentSceneController {
         }else{
             //updating new student
             System.out.println("updating student");
-            studentEntity.setStudentId(studentId);
             StudentEntity ret = StudentManager.updateStudent(studentEntity);
             if(ret == null)
                 System.out.println("update student failed : " + studentEntity.toString());
@@ -167,7 +176,7 @@ public class AddUpdateStudentSceneController {
         Utils.homeButtonFunctionality();
     }
 
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
+    public void setStudentEntity(StudentEntity studentEntity) {
+        this.studentEntity = studentEntity;
     }
 }

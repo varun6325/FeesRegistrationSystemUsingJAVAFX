@@ -82,7 +82,7 @@
                     </GridPane>
                    <TableView fx:id="installmentTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" VBox.vgrow="ALWAYS">
                        <columns>
-                           <TableColumn fx:id="installmentIdCol" prefWidth="124.0" text="installment id" />
+                           <TableColumn fx:id="installmentNoCol" prefWidth="124.0" text="installment no" />
                            <TableColumn fx:id="amountCol" prefWidth="100.0" text="Amount" />
                            <TableColumn fx:id="alreadPaidCol" prefWidth="75.0" text="Already Paid" />
                            <TableColumn fx:id="dueDateCol" prefWidth="75.0" text="Due Date" />

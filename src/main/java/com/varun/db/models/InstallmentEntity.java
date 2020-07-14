@@ -13,7 +13,7 @@ public class InstallmentEntity {
     private BigDecimal intallmentAmount;
     private boolean instalmentIsDone;
     private Date installmentDueDate;
-    private String installmentPaidDate;
+    private Date installmentPaidDate;
     private RegistrationEntity registrationByRegistrationId;
 
 
@@ -71,11 +71,11 @@ public class InstallmentEntity {
 
     @Basic
     @Column(name = "installmentPaidDate")
-    public String getInstallmentPaidDate() {
+    public Date getInstallmentPaidDate() {
         return installmentPaidDate;
     }
 
-    public void setInstallmentPaidDate(String installmentPaidDate) {
+    public void setInstallmentPaidDate(Date installmentPaidDate) {
         this.installmentPaidDate = installmentPaidDate;
     }
 

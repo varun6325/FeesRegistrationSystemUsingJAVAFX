@@ -1,0 +1,87 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+
+<!--<?import javafx.geometry.Insets?>-->
+<!--<?import javafx.scene.control.Button?>-->
+<!--<?import javafx.scene.control.Label?>-->
+<!--<?import javafx.scene.control.TextField?>-->
+<!--<?import javafx.scene.layout.BorderPane?>-->
+<!--<?import javafx.scene.layout.ColumnConstraints?>-->
+<!--<?import javafx.scene.layout.GridPane?>-->
+<!--<?import javafx.scene.layout.HBox?>-->
+<!--<?import javafx.scene.layout.Region?>-->
+<!--<?import javafx.scene.layout.RowConstraints?>-->
+<!--<?import javafx.scene.text.Font?>-->
+
+<!--<?import javafx.scene.control.CheckBox?>-->
+<!--<?import javafx.scene.control.DatePicker?>-->
+<!--<BorderPane minHeight="450.0" minWidth="600.0" prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.varun.controller.AddUpdateCourseSceneController">-->
+    <!--<center>-->
+        <!--<GridPane alignment="center" hgap="10" minHeight="0.0" prefHeight="386.0" prefWidth="411.0" vgap="10">-->
+            <!--<padding>-->
+                <!--<Insets bottom="40" left="40" right="40" top="40" />-->
+            <!--</padding>-->
+            <!--<columnConstraints>-->
+                <!--<ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="Infinity" minWidth="100.0" prefWidth="100.0">-->
+                <!--</ColumnConstraints>-->
+                <!--<ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" minWidth="200.0" prefWidth="200.0">-->
+                <!--</ColumnConstraints>-->
+            <!--</columnConstraints>-->
+
+            <!--&lt;!&ndash; Add Header Label &ndash;&gt;-->
+            <!--<Label text="Add/Update Installment" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.rowSpan="1">-->
+                <!--<font>-->
+                    <!--<Font name="Arial" size="24" />-->
+                <!--</font>-->
+                <!--<GridPane.margin>-->
+                    <!--<Insets bottom="20" left="0" right="0" top="20" />-->
+                <!--</GridPane.margin>-->
+            <!--</Label>-->
+
+
+            <!--<Label text="Amount : " GridPane.columnIndex="0" GridPane.rowIndex="2" />-->
+            <!--<TextField fx:id="installmentAmountTextField" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="2" />-->
+
+
+            <!--&lt;!&ndash; Add Description Label &ndash;&gt;-->
+            <!--<Label text="Already Paid : " GridPane.columnIndex="0" GridPane.rowIndex="3"></Label>-->
+            <!--<CheckBox fx:id="alreadyPaidCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="3"/>-->
+
+
+
+            <!--<Label text="Due Date : " GridPane.columnIndex="0" GridPane.rowIndex="4"></Label>-->
+            <!--<DatePicker fx:id="installmentDueDatePicker" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="4" />-->
+
+            <!--&lt;!&ndash; Add Submit Button &ndash;&gt;-->
+            <!--<Button fx:id="saveButton" defaultButton="true" onAction="#onSaveButtonClicked" prefHeight="40" prefWidth="100" text="Save" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.rowSpan="1">-->
+                <!--<GridPane.margin>-->
+                    <!--<Insets bottom="20" left="0" right="0" top="20" />-->
+                <!--</GridPane.margin>-->
+            <!--</Button>-->
+            <!--<rowConstraints>-->
+                <!--<RowConstraints />-->
+                <!--<RowConstraints />-->
+                <!--<RowConstraints />-->
+                <!--<RowConstraints />-->
+                <!--<RowConstraints />-->
+                <!--<RowConstraints />-->
+            <!--</rowConstraints>-->
+        <!--</GridPane>-->
+    <!--</center>-->
+    <!--<bottom>-->
+        <!--<HBox BorderPane.alignment="CENTER">-->
+            <!--<children>-->
+                <!--<Button fx:id="homeButton" defaultButton="true" onAction="#onHomeButtonClicked" prefHeight="40" prefWidth="100" text="Home">-->
+                    <!--<GridPane.margin>-->
+                        <!--<Insets bottom="20" left="0" right="0" top="20" />-->
+                    <!--</GridPane.margin>-->
+                <!--</Button>-->
+                <!--<Region HBox.hgrow="ALWAYS" />-->
+                <!--<Button fx:id="backButton" defaultButton="true" onAction="#onBackButtonClicked" prefHeight="40" prefWidth="100" text="Back">-->
+                    <!--<GridPane.margin>-->
+                        <!--<Insets bottom="20" left="0" right="0" top="20" />-->
+                    <!--</GridPane.margin>-->
+                <!--</Button>-->
+            <!--</children>-->
+        <!--</HBox>-->
+    <!--</bottom>-->
+<!--</BorderPane>-->

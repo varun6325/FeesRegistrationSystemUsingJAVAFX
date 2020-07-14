@@ -37,18 +37,6 @@ public class Utils {
         }
         return courses;
     }
-    public static ObservableList<InstallmentTableElem> getTestInstallmentTableElem() {
-        if (installmentTableElems == null) {
-            installmentTableElems = FXCollections.observableArrayList();
-            installmentTableElems.add(new InstallmentTableElem(1, 1000.0, true, new Date()));
-            installmentTableElems.add(new InstallmentTableElem(1, 1500.0, false, new Date()));
-            installmentTableElems.add(new InstallmentTableElem(1, 1200.0, true, new Date()));
-            installmentTableElems.add(new InstallmentTableElem(1, 1100.0, true, new Date()));
-            installmentTableElems.add(new InstallmentTableElem(1, 1300.0, false, new Date()));
-            System.out.println(installmentTableElems.size());
-        }
-        return installmentTableElems;
-    }
 
     public static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
@@ -91,5 +79,9 @@ public class Utils {
         java.util.Date utilDate = Utils.getDateFromLocalDate(localDate);
         java.sql.Date sd = new java.sql.Date(utilDate.getTime());
         return sd;
+    }
+    public static final LocalDate getLocalDateFromDate(Date date){
+        LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
+        return ld;
     }
 }

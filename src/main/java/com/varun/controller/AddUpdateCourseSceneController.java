@@ -42,9 +42,10 @@ public class AddUpdateCourseSceneController {
     }
     public static void display(String previousSceneName, Scene previousScene, CourseTableElem courseTableElem) throws IOException{
         //This scene can only be called by Course Details Scene
-        while( Utils.sceneStack.size() > 1 && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.courseDetailsString))
-            Utils.sceneStack.pop();
-        Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
+//        while( Utils.sceneStack.size() > 1 && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.courseDetailsString))
+//            Utils.sceneStack.pop();
+        if(previousSceneName.equals(ParameterStrings.courseDetailsString))
+            Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateCourseScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
         ((AddUpdateCourseSceneController)(fxmlLoader.getController())).setCourseTableElem(courseTableElem);

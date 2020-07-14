@@ -3,24 +3,35 @@ package com.varun.fxmlmodels;
 import java.util.Date;
 
 public class InstallmentTableElem {
-    private int installmentId;
-    private Double installmentAmount;
-    private boolean installmentPaid;
-    private Date installmentDueDate;
+    private int installmentNo;
 
     public int getInstallmentId() {
         return installmentId;
     }
 
-    public InstallmentTableElem(int installmentId, Double installmentAmount, boolean installmentPaid, Date installmentDueDate) {
+    public void setInstallmentId(int installmentId) {
         this.installmentId = installmentId;
+    }
+
+    private int installmentId;
+    private Double installmentAmount;
+    private boolean isInstallmentPaid;
+    private Date installmentDueDate;
+
+    public int getInstallmentNo() {
+        return installmentNo;
+    }
+
+    public InstallmentTableElem(int installmentId, int installmentNo, Double installmentAmount, boolean isInstallmentPaid, Date installmentDueDate) {
+        this.installmentId = installmentId;
+        this.installmentNo = installmentNo;
         this.installmentAmount = installmentAmount;
-        this.installmentPaid = installmentPaid;
+        this.isInstallmentPaid = isInstallmentPaid;
         this.installmentDueDate = installmentDueDate;
     }
 
-    public void setInstallmentId(int installmentId) {
-        this.installmentId = installmentId;
+    public void setInstallmentNo(int installmentNo) {
+        this.installmentNo = installmentNo;
     }
 
     public Double getInstallmentAmount() {
@@ -32,11 +43,11 @@ public class InstallmentTableElem {
     }
 
     public boolean isInstallmentPaid() {
-        return installmentPaid;
+        return isInstallmentPaid;
     }
 
-    public void setInstallmentPaid(boolean installmentPaid) {
-        this.installmentPaid = installmentPaid;
+    public void setIsInstallmentPaid(boolean isInstallmentPaid) {
+        this.isInstallmentPaid = isInstallmentPaid;
     }
 
     public Date getInstallmentDueDate() {

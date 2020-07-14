@@ -94,15 +94,12 @@ public class StudentManager {
         }
         return res;
     }
-    public static StudentEntity getStudentByIdWithRegistrations(int id){
-        StudentEntity res = StudentManager.getStudentByIdWithoutRegistrations(id);
-        if(res == null)
-            return res;
+    public static StudentEntity getStudentByEntityWithRegistrations(StudentEntity studentEntity){
         EntityManager entityManager = null;
         try {
             entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
-            res = entityManager.merge(res);
-            List<RegistrationEntity> registrationEntities = (List)res.getRegistrationsByStudentId();
+            studentEntity = entityManager.merge(studentEntity);
+            List<RegistrationEntity> registrationEntities = (List)studentEntity.getRegistrationsByStudentId();
             for(int i = 0; i < registrationEntities.size(); i++)
                 registrationEntities.get(i);
         }catch(Exception ex){
@@ -111,6 +108,13 @@ public class StudentManager {
             if(entityManager != null)
                 entityManager.close();
         }
+        return studentEntity;
+    }
+    public static StudentEntity getStudentByIdWithRegistrations(int id){
+        StudentEntity res = StudentManager.getStudentByIdWithoutRegistrations(id);
+        if(res == null)
+            return res;
+        res = StudentManager.getStudentByEntityWithRegistrations(res);
         return res;
     }
 }

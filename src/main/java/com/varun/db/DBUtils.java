@@ -8,6 +8,7 @@ import com.varun.db.models.InstallmentEntity;
 import com.varun.db.models.RegistrationEntity;
 import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.CourseTableElem;
+import com.varun.fxmlmodels.InstallmentTableElem;
 import com.varun.fxmlmodels.RegistrationTableElem;
 import com.varun.fxmlmodels.StudentTableElem;
 
@@ -60,5 +61,9 @@ public class DBUtils {
         registrationTableElem.setRegistrationAmountPaid(amountPaid);
         registrationTableElem.setRegistrationDate(registrationEntity.getRegistrationDate());
         return registrationTableElem;
+    }
+
+    public static InstallmentTableElem getInstallmentTableElemFromInstallmentEntity(InstallmentEntity installmentEntity){
+        return new InstallmentTableElem(installmentEntity.getInstallmentId(), installmentEntity.getInstallmentNo(), installmentEntity.getIntallmentAmount().doubleValue(), installmentEntity.isInstalmentIsDone(), installmentEntity.getInstallmentDueDate());
     }
 }

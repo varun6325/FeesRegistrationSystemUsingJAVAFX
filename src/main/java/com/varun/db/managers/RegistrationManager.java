@@ -51,7 +51,7 @@ public class RegistrationManager {
         EntityManager entityManager =null;
         try {
             entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
-            entityManager.merge(registrationEntity);
+            registrationEntity = entityManager.merge(registrationEntity);
             installmentEntities = (List)registrationEntity.getInstallmentsByRegistrationId();
             for(int i = 0; i < installmentEntities.size(); i++)
                 installmentEntities.get(i);

@@ -4,6 +4,7 @@ import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.db.managers.StudentManager;
+import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.CourseTableElem;
 import com.varun.fxmlmodels.StudentTableElem;
 import javafx.fxml.FXML;
@@ -43,7 +44,8 @@ public class StudentDetailsSceneController {
                     StudentTableElem rowData = row.getItem();
                     System.out.println("Double click on: "+rowData.getStudentName());
                     try {
-                        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), rowData.getStudentId());
+                        StudentEntity studentEntity = StudentManager.getStudentByIdWithoutRegistrations(rowData.getStudentId());
+                        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), studentEntity);
                     }catch(IOException ex){
                         System.out.println(ex.getMessage());
                     }
@@ -73,6 +75,6 @@ public class StudentDetailsSceneController {
     }
     @FXML
     private void onAddStudentButtonClicked() throws IOException{
-        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), -1);
+        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), null);
     }
 }
