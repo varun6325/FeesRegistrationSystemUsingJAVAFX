@@ -84,7 +84,7 @@ public class RegistrationEntity {
         this.courseId = courseId;
     }
 
-    @OneToMany(mappedBy = "registrationByRegistrationId")
+    @OneToMany(mappedBy = "registrationByRegistrationId", cascade = CascadeType.ALL)
     public Collection<InstallmentEntity> getInstallmentsByRegistrationId() {
         return installmentsByRegistrationId;
     }

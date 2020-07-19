@@ -101,7 +101,7 @@ public class StudentEntity {
         return Objects.hash(studentId, studentFName, studentMName, studentLName, studentPhNo, registrationsByStudentId, studentDateOfBirth, studentEmail, studentAddress);
     }
 
-    @OneToMany(mappedBy = "studentByStudentId")
+    @OneToMany(mappedBy = "studentByStudentId", cascade = CascadeType.ALL)
     public Collection<RegistrationEntity> getRegistrationsByStudentId() {
         return registrationsByStudentId;
     }

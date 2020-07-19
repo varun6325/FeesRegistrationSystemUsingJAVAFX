@@ -49,21 +49,8 @@
                 <configuration>
                     <release>${maven.compiler.release}</release>
                     <compilerVersion>11</compilerVersion>
-
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>3.1.0</version>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<mainClass>com.varun.Main</mainClass>-->
-                        <!--</manifest>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -71,6 +58,24 @@
                 <configuration>
                     <mainClass>com.varun.App</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>run</id>
+                        <configuration>
+                            <mainClass>com.varun.Main</mainClass>
+                        </configuration>
+                    </execution>
+                    <!-- the below configuration is only for cases when you want to debug-->
+                    <execution>
+                        <id>debug</id>
+                        <configuration>
+                            <mainClass>com.varun.Main</mainClass>
+                            <options>
+                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8010</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>

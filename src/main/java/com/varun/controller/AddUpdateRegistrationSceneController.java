@@ -5,7 +5,9 @@ import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.db.DBUtils;
 import com.varun.db.managers.CourseManager;
+import com.varun.db.managers.InstallmentManager;
 import com.varun.db.managers.RegistrationManager;
+import com.varun.db.managers.StudentManager;
 import com.varun.db.models.CourseEntity;
 import com.varun.db.models.InstallmentEntity;
 import com.varun.db.models.RegistrationEntity;
@@ -28,10 +30,7 @@ import javafx.util.Pair;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class AddUpdateRegistrationSceneController {
 
@@ -50,7 +49,7 @@ public class AddUpdateRegistrationSceneController {
     private List<CourseEntity> courseEntities;
     private RegistrationEntity registrationEntity;
     private List<InstallmentEntity> installmentEntities;
-    int indexForNewInstallments = 0;
+    int indexForNewInstallments = 0; // this is used for setting the installment id as -ve so that it can be used to identify new installment vs modified installments
     public void setRegistrationEntity(RegistrationEntity registrationEntity) {
         this.registrationEntity = registrationEntity;
     }
@@ -153,16 +152,18 @@ public class AddUpdateRegistrationSceneController {
             double finalFees = courseEntity.getCourseFees().doubleValue() * (100.0 - registrationEntity.getDiscount().doubleValue()) / 100.0;
             finalFeesLabel.setText(Double.toString(finalFees));
 
-            //if(registrationEntity.getInstallmentsByRegistrationId() == null){
-                installmentEntities = RegistrationManager.getInstallmentsForRegistration(registrationEntity);
+            installmentEntities = RegistrationManager.getInstallmentsForRegistration(registrationEntity);
+            if(installmentEntities != null) {
                 Double amountPaid = 0.0;
-                for(InstallmentEntity installmentEntity : installmentEntities){
-                    if(installmentEntity.isInstalmentIsDone())
+                for (InstallmentEntity installmentEntity : installmentEntities) {
+                    if (installmentEntity.isInstalmentIsDone())
                         amountPaid += installmentEntity.getIntallmentAmount().doubleValue();
                 }
                 amountPaidLabel.setText(Double.toString(amountPaid));
-
-            //}
+                fillInstallmentTableView();
+            }else{
+                installmentEntities = new ArrayList();
+            }
             courseNameChoiceBox.setDisable(true);
             discountTextField.setText(registrationEntity.getDiscount().toString());
         }else{
@@ -219,8 +220,11 @@ public class AddUpdateRegistrationSceneController {
             }
         }
         //RegistrationEntity registrationEntity = new RegistrationEntity();
-        if(registrationEntity == null)
+        boolean isNewRegistration = false;
+        if(registrationEntity == null) {
             registrationEntity = new RegistrationEntity();
+            isNewRegistration = true;
+        }
         registrationEntity.setCourseId(courseEntity.getCourseId());
         registrationEntity.setStudentId(studentEntity.getStudentId());
         registrationEntity.setDiscount(new BigDecimal(discount));
@@ -228,15 +232,30 @@ public class AddUpdateRegistrationSceneController {
         registrationEntity.setStudentByStudentId(studentEntity);
         System.out.println("courseId : " +  registrationEntity.getCourseId());
 
-        if(registrationEntity != null){
-            //update
-            registrationEntity.setRegistrationDate(null);
+        if(!isNewRegistration){
+            //updation of an existing registration
+            //studentEntity.getRegistrationsByStudentId().add(registrationEntity);
+
+            //registrationEntity.setRegistrationDate(null);
+            registrationEntity.setInstallmentsByRegistrationId(installmentEntities);
+            for(InstallmentEntity installmentEntity : installmentEntities){
+                if(installmentEntity.getInstallmentId() < 0){
+                    //installment no is not implemented as for now.
+                    installmentEntity.setInstallmentId(0);
+                }
+                installmentEntity.setRegistrationByRegistrationId(registrationEntity);
+            }
+
+            registrationEntity.setInstallmentsByRegistrationId(installmentEntities);
             System.out.println("update registration");
-            RegistrationManager.updateRegistration(registrationEntity);
+            //RegistrationManager.updateRegistration(registrationEntity);
+            studentEntity = StudentManager.updateStudent(studentEntity);
         }else{
-            //insert
+            //insertion of new registration
             System.out.println("insert registration");
-            RegistrationManager.addRegistration(registrationEntity);
+            studentEntity.getRegistrationsByStudentId().add(registrationEntity);
+            //RegistrationManager.addRegistration(registrationEntity);
+            studentEntity = StudentManager.updateStudent(studentEntity);
         }
         AddUpdateStudentSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene(), studentEntity);
     }
@@ -247,9 +266,9 @@ public class AddUpdateRegistrationSceneController {
 
         if (result.isPresent()) {
             InstallmentEntity installmentEntity = result.get();
-            installmentEntity.setInstallmentNo(-1);
+            //installmentEntity.setInstallmentNo(-1);
             indexForNewInstallments--;
-            installmentEntity.setInstallmentId(indexForNewInstallments);
+            installmentEntity.setInstallmentNo(indexForNewInstallments);
             installmentEntities.add(installmentEntity);
             fillInstallmentTableView();
         }
@@ -311,12 +330,16 @@ public class AddUpdateRegistrationSceneController {
                     //return new InstallmentDialogInfo(Double.parseDouble(amtTF.getText()), isPaidCB.isSelected(), date);
                     InstallmentEntity ret = new InstallmentEntity();
                     ret.setIntallmentAmount(new BigDecimal(Double.parseDouble(amtTF.getText())));
+                    java.sql.Date sqlDate;
                     ret.setInstalmentIsDone(isPaidCB.isSelected());
-                    java.sql.Date sqlDate = Utils.getSqlDateFromLocalDate(dueDatePicker.getValue());
-                    ret.setInstallmentDueDate(sqlDate);
-                    if(paidDatePicker.getValue() != null)
+                    if(dueDatePicker.getValue() != null) {
+                        sqlDate = Utils.getSqlDateFromLocalDate(dueDatePicker.getValue());
+                        ret.setInstallmentDueDate(sqlDate);
+                    }
+                    if(paidDatePicker.getValue() != null) {
                         sqlDate = Utils.getSqlDateFromLocalDate(paidDatePicker.getValue());
-                    ret.setInstallmentPaidDate(sqlDate);
+                        ret.setInstallmentPaidDate(sqlDate);
+                    }
                     return ret;
                 }
                 return null;
@@ -329,12 +352,16 @@ public class AddUpdateRegistrationSceneController {
         //List<InstallmentEntity> installmentEntities = (List)registrationEntity.getInstallmentsByRegistrationId();
         ObservableList<InstallmentTableElem> installmentTableElems = FXCollections.observableArrayList();
         int i = 1;
-       for(InstallmentEntity installmentEntity : installmentEntities){
+        Double amountPaid = 0.0;
+        for(InstallmentEntity installmentEntity : installmentEntities){
            InstallmentTableElem installmentTableElem = DBUtils.getInstallmentTableElemFromInstallmentEntity(installmentEntity);
            installmentTableElem.setInstallmentNo(i++);
            installmentTableElems.add(installmentTableElem);
-       }
+           if(installmentEntity.isInstalmentIsDone())
+               amountPaid += installmentEntity.getIntallmentAmount().doubleValue();
+        }
         installmentTableView.setItems(installmentTableElems);
+        amountPaidLabel.setText(Double.toString(amountPaid));
     }
 
 }

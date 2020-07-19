@@ -46,6 +46,10 @@ public class InstallmentTableElem {
         return isInstallmentPaid;
     }
 
+    public boolean getIsInstallmentPaid() {
+        return isInstallmentPaid;
+    }
+
     public void setIsInstallmentPaid(boolean isInstallmentPaid) {
         this.isInstallmentPaid = isInstallmentPaid;
     }

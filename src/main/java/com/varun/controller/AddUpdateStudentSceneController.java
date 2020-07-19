@@ -67,8 +67,16 @@ public class AddUpdateStudentSceneController {
                     RegistrationTableElem rowData = row.getItem();
                     System.out.println("Double click on Registration : "+rowData.getRegistrationId());
                     try {
-                        RegistrationEntity registrationEntity = RegistrationManager.getRegistrationById(rowData.getRegistrationId());
-                        AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentEntity, registrationEntity);
+//                        RegistrationEntity registrationEntity = RegistrationManager.getRegistrationById(rowData.getRegistrationId());
+                        RegistrationEntity registrationEntity = null;
+                        for(RegistrationEntity reg : studentEntity.getRegistrationsByStudentId()){
+                            if(reg.getRegistrationId() == rowData.getRegistrationId())
+                                registrationEntity = reg;
+                        }
+                        if(registrationEntity != null)
+                            AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentEntity, registrationEntity);
+                        else
+                            System.out.println("Registration Entity can't be null");
                     }catch(IOException ex){
                         System.out.println(ex.getMessage());
                     }
@@ -92,15 +100,15 @@ public class AddUpdateStudentSceneController {
             studentEmailTextField.setText(studentEntity.getStudentEmail());
             List<RegistrationEntity> registrationEntities;
             Iterator<RegistrationEntity> registrationEntityIterator;
-            try {
-                registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
-                registrationEntityIterator = registrationEntities.iterator();
-            }catch(LazyInitializationException ex){
-                System.out.println("Exception raised : " + ex.getMessage());
+//            try {
+//                registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
+//                registrationEntityIterator = registrationEntities.iterator();
+//            }catch(LazyInitializationException ex){
+//                System.out.println("Exception raised : " + ex.getMessage());
                 studentEntity = StudentManager.getStudentByEntityWithRegistrations(studentEntity);
                 registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
                 registrationEntityIterator = registrationEntities.iterator();
-            }
+//            }
             ObservableList<RegistrationTableElem> registrationTableElems = FXCollections.observableArrayList();
             while(registrationEntityIterator.hasNext()){
                 RegistrationTableElem registrationTableElem = DBUtils.getRegistrationTableElemFromRegistrationEntity(registrationEntityIterator.next());
@@ -120,7 +128,7 @@ public class AddUpdateStudentSceneController {
         Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateStudentScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
-        AddUpdateStudentSceneController addUpdateStudentSceneController = (AddUpdateStudentSceneController)(fxmlLoader.getController());
+        AddUpdateStudentSceneController addUpdateStudentSceneController = fxmlLoader.getController();
         addUpdateStudentSceneController.setStudentEntity(studentEntity);
         addUpdateStudentSceneController.fillScene();
         Scene newScene = new Scene(parent);

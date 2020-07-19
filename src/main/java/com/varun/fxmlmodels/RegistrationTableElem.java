@@ -11,7 +11,7 @@ public class RegistrationTableElem {
     private Double registrationAmountPaid;
     private Date registrationDate;
 
-    public RegistrationTableElem(int registrationId, String courseName, Double courseFees, Double registrationDiscount, Double registrationAmount, Double registrationAmountPaid, Date registrationDate) {
+    public void RegistrationTableElem(int registrationId, String courseName, Double courseFees, Double registrationDiscount, Double registrationAmount, Double registrationAmountPaid, Date registrationDate) {
         this.registrationId = registrationId;
         this.courseName = courseName;
         this.courseFees = courseFees;
@@ -21,7 +21,7 @@ public class RegistrationTableElem {
         this.registrationDate = registrationDate;
     }
 
-    public RegistrationTableElem() { }
+    public void  RegistrationTableElem() { }
 
     public int getRegistrationId() {
 
