@@ -17,13 +17,19 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.Pair;
@@ -281,14 +287,17 @@ public class AddUpdateRegistrationSceneController {
             System.out.println(ex.getMessage());
             discountTextField.setText("0.0");
         }
+        if(discount > 100.0 || discount < 0.0){
+            Utils.showErrorDialog("Error Dialog", "", "discount should be between 0 and 100");
+            discountTextField.setText("0.0");
+        }
         double finalFees = Double.parseDouble(courseFeesLabel.getText()) * (100.0 - discount) / 100.0;
         finalFeesLabel.setText(Double.toString(finalFees));
     }
     private Dialog showAddUpdateInstallmentDialog(InstallmentEntity installmentEntity){
         Dialog<InstallmentEntity> dialog = new Dialog<>();
         dialog.setTitle("Add/Update Installment");
-        dialog.setHeaderText("This is a custom dialog. Enter installment info \n" +
-                "press Okay (or click title bar 'X' for cancel).");
+        dialog.setHeaderText(null);
         dialog.setResizable(true);
 
         Label amtLabel = new Label("Amount: ");
@@ -300,15 +309,25 @@ public class AddUpdateRegistrationSceneController {
         DatePicker dueDatePicker = new DatePicker();
         DatePicker paidDatePicker = new DatePicker();
 
+        ColumnConstraints column1Constraints = new ColumnConstraints(100, 100, Double.MAX_VALUE);
+        //column1Constraints.setHgrow(Priority.ALWAYS);
+        column1Constraints.setHalignment(HPos.CENTER);
+        ColumnConstraints column2Constraints = new ColumnConstraints(150, 150, Double.MAX_VALUE);
+        column2Constraints.setHgrow(Priority.ALWAYS);
         GridPane grid = new GridPane();
-        grid.add(amtLabel, 1, 1);
-        grid.add(amtTF, 2, 1);
-        grid.add(isPaidLabel, 1, 2);
-        grid.add(isPaidCB, 2, 2);
-        grid.add(dueDateLabel, 1, 3);
-        grid.add(dueDatePicker, 2, 3);
-        grid.add(paidDateLabel, 1, 4);
-        grid.add(paidDatePicker, 2, 4);
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        grid.getColumnConstraints().addAll(column1Constraints,column2Constraints);
+        grid.add(amtLabel, 0, 0);
+        grid.add(amtTF, 1, 0);
+        grid.add(isPaidLabel, 0, 1);
+        grid.add(isPaidCB, 1, 1);
+        grid.add(dueDateLabel, 0, 2);
+        grid.add(dueDatePicker, 1, 2);
+        grid.add(paidDateLabel, 0, 3);
+        grid.add(paidDatePicker, 1, 3);
         dialog.getDialogPane().setContent(grid);
         if(installmentEntity != null){
             amtTF.setText(installmentEntity.getIntallmentAmount().toString());
@@ -317,17 +336,76 @@ public class AddUpdateRegistrationSceneController {
                 dueDatePicker.setValue(Utils.getLocalDateFromDate(installmentEntity.getInstallmentDueDate()));
             if(installmentEntity.getInstallmentPaidDate() != null)
                 paidDatePicker.setValue(Utils.getLocalDateFromDate(installmentEntity.getInstallmentPaidDate()));
+        }else{
+            amtTF.setText("0.0");
         }
 
-        ButtonType buttonTypeOk = new ButtonType("Okay", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(addButtonType);
 
+        Button addButton = (Button)dialog.getDialogPane().lookupButton(addButtonType);
+        // the following is added for input validation
+        addButton.addEventFilter(ActionEvent.ACTION, event -> {
+            try{
+                Double.parseDouble(amtTF.getText());
+            }catch(NumberFormatException ex){
+                System.out.println(ex);
+                Utils.showErrorDialog("Dialog Error", "", "installment amount is not valid");
+                event.consume();
+                return;
+            }
+            Double amount = Double.parseDouble(amtTF.getText());
+            if(amount <= 0.0){
+                Utils.showErrorDialog("Dialog Error", "", "installment amount cannot be less that 0");
+                event.consume();
+                return;
+            }
+            Double totalInstallmentsAmount = 0.0;
+            for (InstallmentEntity entity : installmentEntities) {
+                totalInstallmentsAmount += entity.getIntallmentAmount().doubleValue();
+            }
+            Double amountPending = Double.parseDouble(finalFeesLabel.getText()) - totalInstallmentsAmount;
+            if(amountPending < 0.0){
+                Utils.showErrorDialog("Dialog Error", "", "Installment amount is greater than the pending amount");
+                event.consume();
+                return;
+            }
+            if(dueDatePicker.getValue() != null) {
+                java.sql.Date sqlDate = Utils.getSqlDateFromLocalDate(dueDatePicker.getValue());
+                Calendar today = Calendar.getInstance();
+                today.set(Calendar.HOUR_OF_DAY, 0);
+                today.set(Calendar.MINUTE, 0);
+                today.set(Calendar.SECOND, 0);
+                today.set(Calendar.MILLISECOND, 0);
+                java.sql.Date currentSQLDate=new java.sql.Date(today.getTimeInMillis());
+                if(sqlDate.before(currentSQLDate)) {
+                    Utils.showErrorDialog("Error Dialog", null, "Due date cannot be before than the current date");
+                    event.consume();
+                    return;
+                }
+            }else{
+                Utils.showErrorDialog("Error Dialog", null, "Due date should always be entered");
+                event.consume();
+                return;
+            }
+            if(isPaidCB.isSelected() && paidDatePicker.getValue() == null){
+                Utils.showErrorDialog("Error Dialog", null, "Paid Date can't be empty since the already paid check box is selected");
+                event.consume();
+                return;
+            }
+            if(paidDatePicker.getValue() != null && !isPaidCB.isSelected()){
+                Utils.showErrorDialog("Error Dialog", null, "Is Paid check box should be selected if you are entering paid date.");
+                event.consume();
+                return;
+            }
+        });
         dialog.setResultConverter(new Callback<ButtonType, InstallmentEntity>() {
             @Override
             public InstallmentEntity call(ButtonType b) {
 
-                if (b == buttonTypeOk) {
+                if (b == addButtonType) {
                     //return new InstallmentDialogInfo(Double.parseDouble(amtTF.getText()), isPaidCB.isSelected(), date);
+
                     InstallmentEntity ret = new InstallmentEntity();
                     ret.setIntallmentAmount(new BigDecimal(Double.parseDouble(amtTF.getText())));
                     java.sql.Date sqlDate;

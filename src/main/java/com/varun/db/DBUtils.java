@@ -37,7 +37,9 @@ public class DBUtils {
     public static StudentTableElem getStudentTableElemFromStudentEntity(StudentEntity studentEntity){
         String studentName = studentEntity.getStudentFName() + " " + studentEntity.getStudentMName() + " " + studentEntity.getStudentLName();
         Date currentDate = new Date();
-        int studentAge = Utils.getCalendar(currentDate).get(YEAR) - Utils.getCalendar(studentEntity.getStudentDateOfBirth()).get(YEAR);
+        int studentAge= -1;
+        if(studentEntity.getStudentDateOfBirth() != null)
+            studentAge = Utils.getCalendar(currentDate).get(YEAR) - Utils.getCalendar(studentEntity.getStudentDateOfBirth()).get(YEAR);
         return new StudentTableElem(studentEntity.getStudentId(),  studentName, studentAge, studentEntity.getStudentPhNo(), studentEntity.getStudentEmail());
     }
 

@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
     public static Stack<Pair<String, Scene>> sceneStack = new Stack<>();
@@ -83,5 +86,25 @@ public class Utils {
     public static final LocalDate getLocalDateFromDate(Date date){
         LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
         return ld;
+    }
+
+    public static void showErrorDialog(String title, String headerText, String contentText){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+
+        alert.showAndWait();
+    }
+
+    public static boolean regexMatch(String input, String regex, boolean isCaseInSensitive){
+        Pattern p;
+        if(isCaseInSensitive)
+            p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        else
+            p = Pattern.compile(regex);
+
+        Matcher m = p.matcher(input);
+        return m.matches();
     }
 }

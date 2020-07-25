@@ -1,6 +1,5 @@
 package com.varun.db.managers;
 
-import com.varun.controller.StudentDetailsSceneController;
 import com.varun.db.DBUtils;
 import com.varun.db.models.RegistrationEntity;
 import com.varun.db.models.StudentEntity;

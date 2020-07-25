@@ -39,6 +39,9 @@ public class AddUpdateCourseSceneController {
 
     @FXML private void initialize(){
         courseIdTextField.setEditable(false);
+        courseFeesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            onCourseFeesTextChanged(oldValue, newValue);
+        });
     }
     public static void display(String previousSceneName, Scene previousScene, CourseTableElem courseTableElem) throws IOException{
         //This scene can only be called by Course Details Scene
@@ -57,21 +60,35 @@ public class AddUpdateCourseSceneController {
         //TODO: add validation of the text fields
         //TODO: add confirmation box
         CourseEntity courseEntity = new CourseEntity();
-        courseEntity.setCourseFees(new BigDecimal(Double.parseDouble(courseFeesTextField.getText())));
+        String courseName = courseNameTextField.getText();
+        if(courseName.equals("")) {
+            Utils.showErrorDialog("Error Dialog", "", "Course Name cannot be empty");
+            return;
+        }
+        String courseFees = courseFeesTextField.getText();
+        if(courseFees.equals("")){
+            Utils.showErrorDialog("Error Dialog", "", "Course Fees cannot be empty");
+            return;
+        }
+        if(courseFees.equals("0.0")){
+            Utils.showErrorDialog("Error Dialog", "", "Course Fees cannot be 0.0");
+            return;
+        }
+        courseEntity.setCourseFees(new BigDecimal(Double.parseDouble(courseFees)));
         courseEntity.setCourseDesc(courseDescTextField.getText());
-        courseEntity.setCourseName(courseNameTextField.getText());
+        courseEntity.setCourseName(courseName);
         if(courseTableElem != null){
             courseEntity.setCourseId(courseTableElem.getCourseId());
             CourseEntity res = CourseManager.updateCourse(courseEntity);
             if(res == null) {
                 System.out.println("update course failed : " + courseEntity.toString());
-                //TODO:show an alert box for error
+                Utils.showErrorDialog("ERROR", " Some major problem occurred", "If you keep on facing this error, then contact the admin");
             }
         }else{
             boolean ret = CourseManager.addCourse(courseEntity);
             if(!ret){
                 System.out.println("add course failed : " + courseEntity.toString());
-                //TODO : show an alert for error
+                Utils.showErrorDialog("ERROR", " Some major problem occurred", "If you keep on facing this error, then contact the admin");
             }
 
         }
@@ -84,5 +101,13 @@ public class AddUpdateCourseSceneController {
     @FXML
     private void onHomeButtonClicked() throws IOException{
         Utils.homeButtonFunctionality();
+    }
+    private void onCourseFeesTextChanged(String oldValue, String newValue){
+        try {
+            Double.parseDouble(newValue);
+        }catch(NumberFormatException ex){
+            System.out.println(ex.getMessage());
+            courseFeesTextField.setText("0.0");
+        }
     }
 }

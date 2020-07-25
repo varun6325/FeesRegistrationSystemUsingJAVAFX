@@ -27,9 +27,12 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AddUpdateStudentSceneController {
 
+    private static final String EMAIL_REGEX = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
     private StudentEntity studentEntity;
     @FXML TableView registrationTableView;
     @FXML private ScrollPane scrollPane;
@@ -94,8 +97,11 @@ public class AddUpdateStudentSceneController {
             studentMNameTextField.setText(studentEntity.getStudentMName());
             studentLNameTextField.setText(studentEntity.getStudentLName());
             studentAddressTextField.setText(studentEntity.getStudentAddress());
-            LocalDate localDate = Utils.getLocalDateFromString(studentEntity.getStudentDateOfBirth().toString());
-            studentDateOfBirthDatePicker.setValue(localDate);
+            if(studentEntity.getStudentDateOfBirth() != null){
+                String dob = studentEntity.getStudentDateOfBirth().toString();
+                LocalDate localDate = Utils.getLocalDateFromString(dob);
+                studentDateOfBirthDatePicker.setValue(localDate);
+            }
             studentPhNoTextField.setText(studentEntity.getStudentPhNo());
             studentEmailTextField.setText(studentEntity.getStudentEmail());
             List<RegistrationEntity> registrationEntities;
@@ -146,18 +152,61 @@ public class AddUpdateStudentSceneController {
     private void onSubmitButtonClicked() throws IOException{
         //TODO: add validation of the text fields
         //TODO: add confirmation box
-        System.out.println("onSubmit button clicked");
-        if(studentEntity == null)
+
+        String fName = studentFNameTextField.getText();
+        String mName = studentMNameTextField.getText();
+        String lName = studentLNameTextField.getText();
+        LocalDate dob = studentDateOfBirthDatePicker.getValue();
+        java.sql.Date sqlDOB = null;
+        String phNo = studentPhNoTextField.getText();
+        String email = studentEmailTextField.getText();
+
+        if(fName == null || fName.equals("")) {
+            Utils.showErrorDialog("Error Dialog", null, "first name can't be null");
+            return;
+        }
+        if(!Utils.regexMatch(fName,"^[a-z ,.'-]+$", true )) {
+            Utils.showErrorDialog("Error Dialog", null, "first name can only have the following characters A-Z, a-z, comma, dot, hyphen, inverted comma");
+            return;
+        }
+        if(!mName.equals("") && !Utils.regexMatch(mName,"^[a-z ,.'-]*$", true )) {
+            Utils.showErrorDialog("Error Dialog", null, "middle name can only have the following characters A-Z, a-z, comma, dot, hyphen, inverted comma");
+            return;
+        }
+        if(!lName.equals("") && !Utils.regexMatch(lName,"^[a-z ,.'-]*$", true )) {
+            Utils.showErrorDialog("Error Dialog", null, "last name can only have the following characters A-Z, a-z, comma, dot, hyphen, inverted comma");
+            return;
+        }
+        if(dob != null) {
+           sqlDOB = Utils.getSqlDateFromLocalDate(dob);
+            java.sql.Date currentSQLDate=new java.sql.Date(System.currentTimeMillis());
+            if(sqlDOB.after(currentSQLDate) || sqlDOB.equals(currentSQLDate)) {
+                Utils.showErrorDialog("Error Dialog", null, "Date of Birth can't be greater than or equal to current Date");
+                return;
+            }
+        }
+        if(phNo != null && !phNo.equals("") && !Utils.regexMatch(phNo,"^[0-9+-]+$", true )){
+            Utils.showErrorDialog("Error Dialog", null, "Phone No can only contain digits, + and -");
+            return;
+        }
+        if(email != null && !email.equals("") && !Utils.regexMatch(email,EMAIL_REGEX, true )){
+            Utils.showErrorDialog("Error Dialog", null, "Email id has some invalid characters");
+            return;
+        }
+        boolean isNewStudent = false;
+        if(studentEntity == null) {
             studentEntity = new StudentEntity(); // student needs to be inserted - so create a new object
-        studentEntity.setStudentFName(studentFNameTextField.getText());
-        studentEntity.setStudentMName(studentMNameTextField.getText());
-        studentEntity.setStudentLName(studentLNameTextField.getText());
-        java.sql.Date sDate = Utils.getSqlDateFromLocalDate(studentDateOfBirthDatePicker.getValue());
-        studentEntity.setStudentDateOfBirth(sDate);
+            isNewStudent = true;
+        }
+        studentEntity.setStudentFName(fName);
+        studentEntity.setStudentMName(mName);
+        studentEntity.setStudentLName(lName);
+
+        studentEntity.setStudentDateOfBirth(sqlDOB);
         studentEntity.setStudentAddress(studentAddressTextField.getText());
-        studentEntity.setStudentEmail(studentEmailTextField.getText());
-        studentEntity.setStudentPhNo(studentPhNoTextField.getText());
-        if(studentEntity == null){
+        studentEntity.setStudentEmail(email);
+        studentEntity.setStudentPhNo(phNo);
+        if(isNewStudent){
             //inserting new student
             System.out.println("adding student");
             boolean ret = StudentManager.addStudent(studentEntity);

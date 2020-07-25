@@ -58,7 +58,7 @@
                         <Label text="Course Name" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <ChoiceBox fx:id="courseNameChoiceBox" prefHeight="27.0" prefWidth="304.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-                        <Label text="Discount" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label text="Discount(%)" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                         <TextField fx:id="discountTextField" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                         <Label text="Final Fees" GridPane.columnIndex="2" GridPane.rowIndex="3" />

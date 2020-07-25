@@ -2,7 +2,8 @@ package com.varun.db.models;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -12,13 +13,15 @@ public class RegistrationEntity {
     private int registrationId;
     private BigDecimal discount;
     private Date registrationDate;
+    Date lastModified;
     private int studentId;
     private int courseId;
     private Collection<InstallmentEntity> installmentsByRegistrationId;
     private StudentEntity studentByStudentId;
     private CourseEntity courseByCourseId;
 
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "registrationId", insertable=false, updatable=false)
     public int getRegistrationId() {
         return registrationId;
@@ -40,6 +43,7 @@ public class RegistrationEntity {
 
     @Basic
     @Column(name = "registrationDate")
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getRegistrationDate() {
         return registrationDate;
     }
@@ -47,7 +51,16 @@ public class RegistrationEntity {
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
     }
+    @Basic
+    @Column(name = "lastModified")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getLastModified() {
+        return lastModified;
+    }
 
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -111,5 +124,14 @@ public class RegistrationEntity {
 
     public void setCourseByCourseId(CourseEntity courseByCourseId) {
         this.courseByCourseId = courseByCourseId;
+    }
+
+    @PreUpdate
+    @PrePersist
+    public void updateTimeStamps() {
+        lastModified = new Date(System.currentTimeMillis());
+        if (registrationDate==null) {
+            registrationDate = new Date(System.currentTimeMillis());
+        }
     }
 }
