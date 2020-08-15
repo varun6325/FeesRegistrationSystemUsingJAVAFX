@@ -7,6 +7,7 @@ import com.varun.db.managers.StudentManager;
 import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.CourseTableElem;
 import com.varun.fxmlmodels.StudentTableElem;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,6 +28,8 @@ public class StudentDetailsSceneController {
     @FXML private TableColumn<StudentTableElem, Integer> studentAge;
     @FXML private TableColumn<StudentTableElem, String> studentPhNo;
     @FXML private TableColumn<StudentTableElem, String> studentEmail;
+    @FXML private ChoiceBox<String> searchChoiceBox;
+    @FXML private TextField searchTextField;
 
     @FXML private void initialize(){
         studentId.setCellValueFactory(new PropertyValueFactory<>("studentId"));
@@ -34,7 +37,8 @@ public class StudentDetailsSceneController {
         studentAge.setCellValueFactory(new PropertyValueFactory<>("studentAge"));
         studentEmail.setCellValueFactory(new PropertyValueFactory<>("studentEmail"));
         studentPhNo.setCellValueFactory(new PropertyValueFactory<>("studentPhNo"));
-        studentTableView.setItems(StudentManager.getStudentTableElemList());
+        FilteredList<StudentTableElem> flStudents = new FilteredList(StudentManager.getStudentTableElemList(), p -> true);
+        studentTableView.setItems(flStudents);
         studentTableView.setPlaceholder(new Label("No student admitted into the system"));
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         studentTableView.setRowFactory(tv -> {
@@ -47,11 +51,52 @@ public class StudentDetailsSceneController {
                         StudentEntity studentEntity = StudentManager.getStudentByIdWithoutRegistrations(rowData.getStudentId());
                         AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), studentEntity);
                     }catch(IOException ex){
-                        System.out.println(ex.getMessage());
+                        System.out.println(ex);
                     }
                 }
             });
             return row ;
+        });
+
+        searchChoiceBox.getItems().addAll("studentName", "studentEmail");// to add a new filter for search, add here
+        searchChoiceBox.setValue("studentName");
+        searchTextField.setPromptText("Search here!");
+        searchTextField.setOnKeyReleased(keyEvent ->
+        {
+            if(!searchTextField.getText().isEmpty()) {
+                switch (searchChoiceBox.getValue())//Switch on choiceBox value
+                {
+                    //all the choice box elements for which the searching needs to be implemented
+                    case "studentName":
+                        flStudents.setPredicate(p -> {
+                            //filter table by first name
+                            if (p.getStudentName() != null)
+                                return p.getStudentName().toLowerCase().contains(searchTextField.getText().toLowerCase().trim());
+                            else
+                                return false;
+                        });
+                        break;
+                    case "studentEmail":
+                        //filter table by email
+                        flStudents.setPredicate(p -> {
+                            if (p.getStudentEmail() != null)
+                                return p.getStudentEmail().toLowerCase().contains(searchTextField.getText().toLowerCase().trim());
+                            else
+                                return false;
+                        });
+                        break;
+                }
+            }else
+                flStudents.setPredicate(null);
+
+        });
+        searchChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) ->
+        {//reset table and textfield when new choice is selected
+            if (newVal != null)
+            {
+                searchTextField.setText("");
+                flStudents.setPredicate(null);//This is same as saying flPerson.setPredicate(p->true);
+            }
         });
     }
 

@@ -132,7 +132,7 @@ public class AddUpdateRegistrationSceneController {
                             System.out.println("result is not present in dialog");
                         }
                     }catch(Exception ex){
-                        System.out.println(ex.getMessage());
+                        System.out.println(ex);
                     }
                 }
             });
@@ -284,7 +284,7 @@ public class AddUpdateRegistrationSceneController {
         try {
             discount = Double.parseDouble(newValue);
         }catch(NumberFormatException ex){
-            System.out.println(ex.getMessage());
+            System.out.println(ex);
             discountTextField.setText("0.0");
         }
         if(discount > 100.0 || discount < 0.0){

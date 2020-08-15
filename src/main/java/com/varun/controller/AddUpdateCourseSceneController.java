@@ -106,7 +106,7 @@ public class AddUpdateCourseSceneController {
         try {
             Double.parseDouble(newValue);
         }catch(NumberFormatException ex){
-            System.out.println(ex.getMessage());
+            System.out.println(ex);
             courseFeesTextField.setText("0.0");
         }
     }

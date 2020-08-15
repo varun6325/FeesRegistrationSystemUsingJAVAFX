@@ -103,18 +103,22 @@
     </center>
     <bottom>
         <HBox BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" left="10" right="10" bottom="10"/>
+            </padding>
             <children>
-                <Button fx:id="homeButton" defaultButton="true" onAction="#onHomeButtonClicked" prefHeight="40" prefWidth="100" text="Home">
-                    <GridPane.margin>
-                        <Insets bottom="20" left="0" right="0" top="20" />
-                    </GridPane.margin>
-                  </Button>
-                <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="backButton" defaultButton="true" onAction="#onBackButtonClicked" prefHeight="40" prefWidth="100" text="Back">
                     <GridPane.margin>
                         <Insets bottom="20" left="0" right="0" top="20" />
                     </GridPane.margin>
                 </Button>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="homeButton" defaultButton="true" onAction="#onHomeButtonClicked" prefHeight="40" prefWidth="100" text="Home">
+                    <GridPane.margin>
+                        <Insets bottom="20" left="0" right="0" top="20" />
+                    </GridPane.margin>
+                  </Button>
+
             </children>
         </HBox>
     </bottom>

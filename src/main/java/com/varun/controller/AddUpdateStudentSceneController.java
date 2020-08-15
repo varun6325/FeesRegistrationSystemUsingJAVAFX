@@ -81,7 +81,7 @@ public class AddUpdateStudentSceneController {
                         else
                             System.out.println("Registration Entity can't be null");
                     }catch(IOException ex){
-                        System.out.println(ex.getMessage());
+                        System.out.println(ex);
                     }
                 }
             });

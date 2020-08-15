@@ -11,9 +11,14 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.TextField?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.varun.controller.StudentDetailsSceneController">
    <center>
       <AnchorPane fx:id="parentPane">
+          <padding>
+              <Insets top="10" left="10" right="10" bottom="10"/>
+          </padding>
       <children>
           <TableView fx:id="studentTableView" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columns>
@@ -32,6 +37,9 @@
    </center>
     <bottom>
         <HBox BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" left="10" right="10" bottom="10"/>
+            </padding>
             <children>
                 <Button fx:id="backButton" defaultButton="true" onAction="#onBackButtonClicked" prefHeight="40" prefWidth="100" text="Back" >
                     <GridPane.margin>
@@ -44,6 +52,10 @@
                         <Insets bottom="20" left="0" right="0" top="20" />
                     </GridPane.margin>
                 </Button>
+                <Region HBox.hgrow="ALWAYS" />
+                <ChoiceBox fx:id="searchChoiceBox" prefHeight="40.0" prefWidth="100.0"/>
+                <Region prefWidth="10" />
+                <TextField fx:id="searchTextField" prefHeight="40.0" prefWidth="150.0"/>
                 <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="homeButton" defaultButton="true" onAction="#onHomeButtonClicked" prefHeight="40" prefWidth="100" text="Home" >
                     <GridPane.margin>
