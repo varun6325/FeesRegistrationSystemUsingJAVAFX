@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class RegistrationTableElem {
     private int registrationId;
+    private String studentName;
+
     private String courseName;
     private Double courseFees;
     private Double registrationDiscount;
@@ -11,17 +13,13 @@ public class RegistrationTableElem {
     private Double registrationAmountPaid;
     private Date registrationDate;
 
-    public void RegistrationTableElem(int registrationId, String courseName, Double courseFees, Double registrationDiscount, Double registrationAmount, Double registrationAmountPaid, Date registrationDate) {
-        this.registrationId = registrationId;
-        this.courseName = courseName;
-        this.courseFees = courseFees;
-        this.registrationDiscount = registrationDiscount;
-        this.registrationAmount = registrationAmount;
-        this.registrationAmountPaid = registrationAmountPaid;
-        this.registrationDate = registrationDate;
+    public String getStudentName() {
+        return studentName;
     }
 
-    public void  RegistrationTableElem() { }
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
 
     public int getRegistrationId() {
 

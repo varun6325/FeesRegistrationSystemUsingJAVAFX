@@ -97,7 +97,7 @@ public class RegistrationEntity {
         this.courseId = courseId;
     }
 
-    @OneToMany(mappedBy = "registrationByRegistrationId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "registrationByRegistrationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Collection<InstallmentEntity> getInstallmentsByRegistrationId() {
         return installmentsByRegistrationId;
     }
@@ -106,7 +106,7 @@ public class RegistrationEntity {
         this.installmentsByRegistrationId = installmentsByRegistrationId;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studentId", referencedColumnName = "studentId", nullable = false)
     public StudentEntity getStudentByStudentId() {
         return studentByStudentId;
@@ -116,7 +116,7 @@ public class RegistrationEntity {
         this.studentByStudentId = studentByStudentId;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId", referencedColumnName = "courseId", nullable = false)
     public CourseEntity getCourseByCourseId() {
         return courseByCourseId;

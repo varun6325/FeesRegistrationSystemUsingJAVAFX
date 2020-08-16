@@ -11,6 +11,7 @@ import com.varun.fxmlmodels.CourseTableElem;
 import com.varun.fxmlmodels.InstallmentTableElem;
 import com.varun.fxmlmodels.RegistrationTableElem;
 import com.varun.fxmlmodels.StudentTableElem;
+import org.hibernate.LazyInitializationException;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -37,15 +38,16 @@ public class DBUtils {
     public static StudentTableElem getStudentTableElemFromStudentEntity(StudentEntity studentEntity){
         String studentName = studentEntity.getStudentFName() + " " + studentEntity.getStudentMName() + " " + studentEntity.getStudentLName();
         Date currentDate = new Date();
-        int studentAge= -1;
+        int studentAge = -1;
         if(studentEntity.getStudentDateOfBirth() != null)
             studentAge = Utils.getCalendar(currentDate).get(YEAR) - Utils.getCalendar(studentEntity.getStudentDateOfBirth()).get(YEAR);
         return new StudentTableElem(studentEntity.getStudentId(),  studentName, studentAge, studentEntity.getStudentPhNo(), studentEntity.getStudentEmail());
     }
 
-    public static RegistrationTableElem getRegistrationTableElemFromRegistrationEntity(RegistrationEntity registrationEntity){
+    public static RegistrationTableElem getRegistrationTableElemFromRegistrationEntity(RegistrationEntity registrationEntity, String studentName){
         CourseEntity courseEntity = CourseManager.getCourseById(registrationEntity.getCourseId());
-        List<InstallmentEntity> installmentEntities = RegistrationManager.getInstallmentsForRegistration(registrationEntity);
+        registrationEntity = RegistrationManager.getRegistrationWithInstallationsFromEntitiy(registrationEntity);
+        List<InstallmentEntity> installmentEntities = (List)registrationEntity.getInstallmentsByRegistrationId();
         Double amountPaid = 0.0;
         if(installmentEntities != null){
             for(InstallmentEntity installmentEntity : installmentEntities){
@@ -55,6 +57,7 @@ public class DBUtils {
         }
         Double registrationAmount = courseEntity.getCourseFees().doubleValue() * (100.0-registrationEntity.getDiscount().doubleValue()) / 100.0;
         RegistrationTableElem registrationTableElem = new RegistrationTableElem();
+        registrationTableElem.setStudentName(studentName);
         registrationTableElem.setRegistrationId(registrationEntity.getRegistrationId());
         registrationTableElem.setCourseName(courseEntity.getCourseName());
         registrationTableElem.setCourseFees(courseEntity.getCourseFees().doubleValue());

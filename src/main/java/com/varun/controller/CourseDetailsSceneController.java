@@ -54,7 +54,7 @@ public class CourseDetailsSceneController {
             });
             return row ;
         });
-        searchChoiceBox.getItems().addAll("courseName", "courseDesc");// to add a new filter for search, add here
+        searchChoiceBox.getItems().addAll("course name", "course desc");// to add a new filter for search, add here
         searchChoiceBox.setValue("courseName");
         searchTextField.setPromptText("Search here!");
         searchTextField.setOnKeyReleased(keyEvent ->
@@ -63,7 +63,7 @@ public class CourseDetailsSceneController {
                 switch (searchChoiceBox.getValue())//Switch on choiceBox value
                 {
                     //all the choice box elements for which the searching needs to be implemented
-                    case "courseName"://filter table by course name
+                    case "course name"://filter table by course name
                         flCourses.setPredicate(p -> {
                             if (p.getCourseName() != null)
                                 return p.getCourseName().toLowerCase().contains(searchTextField.getText().toLowerCase().trim());
@@ -71,7 +71,7 @@ public class CourseDetailsSceneController {
                                 return false;
                         });
                         break;
-                    case "courseDesc"://filter table by course description
+                    case "course desc"://filter table by course description
                         flCourses.setPredicate(p -> {
                             if (p.getCourseDesc() != null)
                                 return p.getCourseDesc().toLowerCase().contains(searchTextField.getText().toLowerCase().trim());

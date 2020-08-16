@@ -81,7 +81,7 @@ public class CourseEntity {
                 '}';
     }
 
-    @OneToMany(mappedBy = "courseByCourseId")
+    @OneToMany(mappedBy = "courseByCourseId", fetch = FetchType.LAZY)
     public Collection<RegistrationEntity> getRegistrationsByCourseId() {
         return registrationsByCourseId;
     }

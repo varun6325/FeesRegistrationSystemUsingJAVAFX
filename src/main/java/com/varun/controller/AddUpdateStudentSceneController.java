@@ -4,12 +4,10 @@ import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.db.DBUtils;
-import com.varun.db.managers.RegistrationManager;
 import com.varun.db.managers.StudentManager;
 import com.varun.db.models.RegistrationEntity;
 import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.RegistrationTableElem;
-import com.varun.fxmlmodels.StudentTableElem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,15 +18,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import org.hibernate.LazyInitializationException;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class AddUpdateStudentSceneController {
 
@@ -76,6 +71,7 @@ public class AddUpdateStudentSceneController {
                             if(reg.getRegistrationId() == rowData.getRegistrationId())
                                 registrationEntity = reg;
                         }
+                        //NOTE: at this point registration entity would be without the installations info - they would be needed to load lazily when required
                         if(registrationEntity != null)
                             AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, registrationTableView.getScene(), studentEntity, registrationEntity);
                         else
@@ -106,18 +102,14 @@ public class AddUpdateStudentSceneController {
             studentEmailTextField.setText(studentEntity.getStudentEmail());
             List<RegistrationEntity> registrationEntities;
             Iterator<RegistrationEntity> registrationEntityIterator;
-//            try {
-//                registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
-//                registrationEntityIterator = registrationEntities.iterator();
-//            }catch(LazyInitializationException ex){
-//                System.out.println("Exception raised : " + ex.getMessage());
-                studentEntity = StudentManager.getStudentByEntityWithRegistrations(studentEntity);
-                registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
-                registrationEntityIterator = registrationEntities.iterator();
-//            }
+            // always get fresh registrations for the db for the student
+            studentEntity = StudentManager.getStudentWithRegistrationsFromEntity(studentEntity);
+            registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
+            registrationEntityIterator = registrationEntities.iterator();
+
             ObservableList<RegistrationTableElem> registrationTableElems = FXCollections.observableArrayList();
             while(registrationEntityIterator.hasNext()){
-                RegistrationTableElem registrationTableElem = DBUtils.getRegistrationTableElemFromRegistrationEntity(registrationEntityIterator.next());
+                RegistrationTableElem registrationTableElem = DBUtils.getRegistrationTableElemFromRegistrationEntity(registrationEntityIterator.next(), null);
                 registrationTableElems.add(registrationTableElem);
             }
             registrationTableView.setItems(registrationTableElems);

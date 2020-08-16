@@ -6,13 +6,17 @@ import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.StudentTableElem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.hibernate.LazyInitializationException;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnitUtil;
 import java.util.List;
 
 public class StudentManager {
     public static List<StudentEntity> getStudentDBList(){
-        List<StudentEntity> studentEntities = null;
+        List<StudentEntity> studentEntities;
         EntityManager entityManager = null;
         try {
             entityManager  = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
@@ -79,7 +83,7 @@ public class StudentManager {
         }
         return res;
     }
-    public static StudentEntity getStudentByIdWithoutRegistrations(int id){
+    public static StudentEntity getStudentWithoutRegistrationsFromId(int id){
         StudentEntity res = null;
         EntityManager entityManager = null;
         try {
@@ -93,10 +97,18 @@ public class StudentManager {
         }
         return res;
     }
-    public static StudentEntity getStudentByEntityWithRegistrations(StudentEntity studentEntity){
+    public static StudentEntity getStudentWithRegistrationsFromEntity(StudentEntity studentEntity){
+        try{
+            studentEntity.getRegistrationsByStudentId().size();
+            return studentEntity;// we already have the registrations with respect to this student, so no need to do it again
+        }catch(LazyInitializationException ex){
+            System.out.println(ex);
+            // registrations need to be captured from the db
+        }
         EntityManager entityManager = null;
         try {
             entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+            PersistenceUnitUtil unitUtil = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
             studentEntity = entityManager.merge(studentEntity);
             List<RegistrationEntity> registrationEntities = (List)studentEntity.getRegistrationsByStudentId();
             for(int i = 0; i < registrationEntities.size(); i++)
@@ -109,11 +121,12 @@ public class StudentManager {
         }
         return studentEntity;
     }
-    public static StudentEntity getStudentByIdWithRegistrations(int id){
-        StudentEntity res = StudentManager.getStudentByIdWithoutRegistrations(id);
+    public static StudentEntity getStudentWithRegistrationsFromId(int id){
+        StudentEntity res = StudentManager.getStudentWithoutRegistrationsFromId(id);
         if(res == null)
             return res;
-        res = StudentManager.getStudentByEntityWithRegistrations(res);
+        res = StudentManager.getStudentWithRegistrationsFromEntity(res);
         return res;
     }
 }
+

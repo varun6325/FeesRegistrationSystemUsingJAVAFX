@@ -54,7 +54,6 @@ public class AddUpdateRegistrationSceneController {
     private StudentEntity studentEntity = null;
     private List<CourseEntity> courseEntities;
     private RegistrationEntity registrationEntity;
-    private List<InstallmentEntity> installmentEntities;
     int indexForNewInstallments = 0; // this is used for setting the installment id as -ve so that it can be used to identify new installment vs modified installments
     public void setRegistrationEntity(RegistrationEntity registrationEntity) {
         this.registrationEntity = registrationEntity;
@@ -112,7 +111,7 @@ public class AddUpdateRegistrationSceneController {
                     try {
                         int instId = rowData.getInstallmentId();
                         InstallmentEntity ent = null;
-                        for(InstallmentEntity installmentEntity : installmentEntities){
+                        for(InstallmentEntity installmentEntity : registrationEntity.getInstallmentsByRegistrationId()){
                             if(installmentEntity.getInstallmentId() == instId) {
                                 ent = installmentEntity;
                                 break;
@@ -125,8 +124,8 @@ public class AddUpdateRegistrationSceneController {
                             InstallmentEntity installmentEntity = result.get();
                             installmentEntity.setInstallmentId(ent.getInstallmentId());
                             installmentEntity.setInstallmentNo(ent.getInstallmentNo());
-                            installmentEntities.remove(ent);
-                            installmentEntities.add(installmentEntity);
+                            registrationEntity.getInstallmentsByRegistrationId().remove(ent);
+                            registrationEntity.getInstallmentsByRegistrationId().add(installmentEntity);
                             fillInstallmentTableView();
                         }else{
                             System.out.println("result is not present in dialog");
@@ -158,17 +157,16 @@ public class AddUpdateRegistrationSceneController {
             double finalFees = courseEntity.getCourseFees().doubleValue() * (100.0 - registrationEntity.getDiscount().doubleValue()) / 100.0;
             finalFeesLabel.setText(Double.toString(finalFees));
 
-            installmentEntities = RegistrationManager.getInstallmentsForRegistration(registrationEntity);
-            if(installmentEntities != null) {
+            //always get fresh installments for the registration
+            registrationEntity = RegistrationManager.getRegistrationWithInstallationsFromEntitiy(registrationEntity);
+            if(registrationEntity.getInstallmentsByRegistrationId() != null) {
                 Double amountPaid = 0.0;
-                for (InstallmentEntity installmentEntity : installmentEntities) {
+                for (InstallmentEntity installmentEntity : registrationEntity.getInstallmentsByRegistrationId()) {
                     if (installmentEntity.isInstalmentIsDone())
                         amountPaid += installmentEntity.getIntallmentAmount().doubleValue();
                 }
                 amountPaidLabel.setText(Double.toString(amountPaid));
                 fillInstallmentTableView();
-            }else{
-                installmentEntities = new ArrayList();
             }
             courseNameChoiceBox.setDisable(true);
             discountTextField.setText(registrationEntity.getDiscount().toString());
@@ -243,8 +241,8 @@ public class AddUpdateRegistrationSceneController {
             //studentEntity.getRegistrationsByStudentId().add(registrationEntity);
 
             //registrationEntity.setRegistrationDate(null);
-            registrationEntity.setInstallmentsByRegistrationId(installmentEntities);
-            for(InstallmentEntity installmentEntity : installmentEntities){
+            //registrationEntity.setInstallmentsByRegistrationId(installmentEntities);
+            for(InstallmentEntity installmentEntity : registrationEntity.getInstallmentsByRegistrationId()){
                 if(installmentEntity.getInstallmentId() < 0){
                     //installment no is not implemented as for now.
                     installmentEntity.setInstallmentId(0);
@@ -252,16 +250,15 @@ public class AddUpdateRegistrationSceneController {
                 installmentEntity.setRegistrationByRegistrationId(registrationEntity);
             }
 
-            registrationEntity.setInstallmentsByRegistrationId(installmentEntities);
             System.out.println("update registration");
-            //RegistrationManager.updateRegistration(registrationEntity);
-            studentEntity = StudentManager.updateStudent(studentEntity);
+            RegistrationManager.updateRegistration(registrationEntity);
+            //studentEntity = StudentManager.updateStudent(studentEntity);
         }else{
             //insertion of new registration
             System.out.println("insert registration");
             studentEntity.getRegistrationsByStudentId().add(registrationEntity);
-            //RegistrationManager.addRegistration(registrationEntity);
-            studentEntity = StudentManager.updateStudent(studentEntity);
+            RegistrationManager.addRegistration(registrationEntity);
+            //studentEntity = StudentManager.updateStudent(studentEntity);
         }
         AddUpdateStudentSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene(), studentEntity);
     }
@@ -275,7 +272,7 @@ public class AddUpdateRegistrationSceneController {
             //installmentEntity.setInstallmentNo(-1);
             indexForNewInstallments--;
             installmentEntity.setInstallmentNo(indexForNewInstallments);
-            installmentEntities.add(installmentEntity);
+            registrationEntity.getInstallmentsByRegistrationId().add(installmentEntity);
             fillInstallmentTableView();
         }
     }
@@ -361,7 +358,7 @@ public class AddUpdateRegistrationSceneController {
                 return;
             }
             Double totalInstallmentsAmount = 0.0;
-            for (InstallmentEntity entity : installmentEntities) {
+            for (InstallmentEntity entity : registrationEntity.getInstallmentsByRegistrationId()) {
                 totalInstallmentsAmount += entity.getIntallmentAmount().doubleValue();
             }
             Double amountPending = Double.parseDouble(finalFeesLabel.getText()) - totalInstallmentsAmount;
@@ -431,7 +428,7 @@ public class AddUpdateRegistrationSceneController {
         ObservableList<InstallmentTableElem> installmentTableElems = FXCollections.observableArrayList();
         int i = 1;
         Double amountPaid = 0.0;
-        for(InstallmentEntity installmentEntity : installmentEntities){
+        for(InstallmentEntity installmentEntity : registrationEntity.getInstallmentsByRegistrationId()){
            InstallmentTableElem installmentTableElem = DBUtils.getInstallmentTableElemFromInstallmentEntity(installmentEntity);
            installmentTableElem.setInstallmentNo(i++);
            installmentTableElems.add(installmentTableElem);

@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Callback;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -35,6 +36,19 @@ public class StudentDetailsSceneController {
         studentId.setCellValueFactory(new PropertyValueFactory<>("studentId"));
         studentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         studentAge.setCellValueFactory(new PropertyValueFactory<>("studentAge"));
+        studentAge.setCellFactory(new Callback<TableColumn<StudentTableElem, Integer>, TableCell<StudentTableElem, Integer>>() {
+            @Override
+            public TableCell call(TableColumn tableColumn) {
+                return new TableCell<String, Integer>(){
+                    @Override
+                    protected void updateItem(Integer integer, boolean b) {
+                        if (integer != null) {
+                            super.setText(integer < 0?"":integer.toString());
+                        }
+                    }
+                };
+            }
+        });
         studentEmail.setCellValueFactory(new PropertyValueFactory<>("studentEmail"));
         studentPhNo.setCellValueFactory(new PropertyValueFactory<>("studentPhNo"));
         FilteredList<StudentTableElem> flStudents = new FilteredList(StudentManager.getStudentTableElemList(), p -> true);
@@ -48,7 +62,8 @@ public class StudentDetailsSceneController {
                     StudentTableElem rowData = row.getItem();
                     System.out.println("Double click on: "+rowData.getStudentName());
                     try {
-                        StudentEntity studentEntity = StudentManager.getStudentByIdWithoutRegistrations(rowData.getStudentId());
+                        //registrations will be captured from the db later. they are lazily initialized
+                        StudentEntity studentEntity = StudentManager.getStudentWithoutRegistrationsFromId(rowData.getStudentId());
                         AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), studentEntity);
                     }catch(IOException ex){
                         System.out.println(ex);
@@ -58,7 +73,7 @@ public class StudentDetailsSceneController {
             return row ;
         });
 
-        searchChoiceBox.getItems().addAll("studentName", "studentEmail");// to add a new filter for search, add here
+        searchChoiceBox.getItems().addAll("student name", "student email");// to add a new filter for search, add here
         searchChoiceBox.setValue("studentName");
         searchTextField.setPromptText("Search here!");
         searchTextField.setOnKeyReleased(keyEvent ->
@@ -67,7 +82,7 @@ public class StudentDetailsSceneController {
                 switch (searchChoiceBox.getValue())//Switch on choiceBox value
                 {
                     //all the choice box elements for which the searching needs to be implemented
-                    case "studentName":
+                    case "student name":
                         flStudents.setPredicate(p -> {
                             //filter table by first name
                             if (p.getStudentName() != null)
@@ -76,7 +91,7 @@ public class StudentDetailsSceneController {
                                 return false;
                         });
                         break;
-                    case "studentEmail":
+                    case "student email":
                         //filter table by email
                         flStudents.setPredicate(p -> {
                             if (p.getStudentEmail() != null)

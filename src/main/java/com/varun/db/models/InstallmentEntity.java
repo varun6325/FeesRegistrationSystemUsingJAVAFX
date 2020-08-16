@@ -98,7 +98,7 @@ public class InstallmentEntity {
         return Objects.hash(installmentId, installmentNo, intallmentAmount, instalmentIsDone, installmentDueDate, installmentPaidDate);
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registrationId", referencedColumnName = "registrationId", nullable = false)
     public RegistrationEntity getRegistrationByRegistrationId() {
         return registrationByRegistrationId;
