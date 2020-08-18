@@ -1,5 +1,5 @@
 # FeesRegistration System Using JAVAFX
-This is a simple Fees Registration System built using javafx+fxml, that can be used by anyone for basic student registration and mantaining their records and sending notifications on due date.
+This is a simple Fees Registration System built using javafx+fxml, that can be used by anyone for basic student registration and mantaining their records and generating reminders on due date.
 
 ## What it does :
 You can do the following:
