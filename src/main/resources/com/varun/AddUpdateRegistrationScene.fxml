@@ -98,8 +98,8 @@
                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                        </columnResizePolicy>
                    </TableView>
-                   <Button fx:id="addInstallmentButton" mnemonicParsing="false" onAction="#onAddInstallmentButtonClicked" text="Add Installment" />
-                   <Button fx:id="submitButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSubmitButtonClicked" text="Submit" />
+                   <Button fx:id="addInstallmentButton" defaultButton="true" mnemonicParsing="false" onAction="#onAddInstallmentButtonClicked" text="Add Installment" />
+                   <Button fx:id="submitButton" defaultButton="true" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSubmitButtonClicked" text="Submit" />
                </children>
                 <padding>
                     <Insets bottom="30.0" left="30.0" right="30.0" />

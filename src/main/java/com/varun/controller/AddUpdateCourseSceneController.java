@@ -37,6 +37,10 @@ public class AddUpdateCourseSceneController {
             courseNameTextField.setText(courseTableElem.getCourseName());
             courseDescTextField.setText(courseTableElem.getCourseDesc());
             courseFeesTextField.setText(String.valueOf(courseTableElem.getCourseFees()));
+            //making fees textfield uneditable - This is because it has direct mapping with students via registrations.
+            // If fees is updated for the course, it will impact the registration as for the already existing registrations the fees will be updated
+            //taking those registrations to an inconsistent state
+            courseFeesTextField.setEditable(false);
         }
     }
 
@@ -66,9 +70,12 @@ public class AddUpdateCourseSceneController {
         CourseEntity courseEntity = new CourseEntity();
         String courseName = courseNameTextField.getText();
 
-        if(CourseManager.checkCourseExists(courseName)){
-            Utils.showErrorDialog("Error Dialog", "", "Dublicate Course Name. This name already exists for some other course");
-            return;
+        if(courseTableElem == null || !courseTableElem.getCourseName().equals(courseName)){
+            //if its a new course or we are modifying name of the course - we need to make sure that the course name does not exists
+            if(CourseManager.checkCourseExists(courseName)) {
+                Utils.showErrorDialog("Error Dialog", "", "Duplicate Course Name. This name already exists for some other course");
+                return;
+            }
         }
         if(courseName.equals("")) {
             Utils.showErrorDialog("Error Dialog", "", "Course Name cannot be empty");
@@ -87,6 +94,7 @@ public class AddUpdateCourseSceneController {
         courseEntity.setCourseDesc(courseDescTextField.getText());
         courseEntity.setCourseName(courseName);
         if(courseTableElem != null){
+            //updating a course
             courseEntity.setCourseId(courseTableElem.getCourseId());
             CourseEntity res = CourseManager.updateCourse(courseEntity);
             if(res == null) {
@@ -94,6 +102,7 @@ public class AddUpdateCourseSceneController {
                 Utils.showErrorDialog("ERROR", " Some major problem occurred", "If you keep on facing this error, then contact the admin");
             }
         }else{
+            // adding a new course
             boolean ret = CourseManager.addCourse(courseEntity);
             if(!ret){
                 System.out.println("add course failed : " + courseEntity.toString());
