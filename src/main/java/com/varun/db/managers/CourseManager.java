@@ -7,9 +7,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 public class CourseManager {
@@ -49,7 +52,6 @@ public class CourseManager {
             entityManager.getTransaction().commit();
             System.out.println("Adding course successful : " + courseEntity.toString());
         }catch(Exception ex){
-            System.out.println(ex);
             if(entityManager != null && entityManager.getTransaction().isActive())
                 entityManager.getTransaction().rollback();
                 return false;
@@ -93,5 +95,26 @@ public class CourseManager {
                 entityManager.close();
         }
         return res;
+    }
+
+    public static boolean checkCourseExists(String courseName){
+        List<CourseEntity> courseEntities = null;
+        EntityManager entityManager = null;
+        try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+            TypedQuery<Long> query = entityManager.createQuery("Select count(*) from CourseEntity a where a.courseName like :courseName", Long.class);
+            query.setParameter("courseName", courseName);
+            Long out = query.getSingleResult();
+            if(out == 0)
+                return false;
+
+        }catch(Exception ex){
+            System.out.println(ex);
+            courseEntities = null;
+        }finally {
+            if(entityManager != null)
+                entityManager.close();
+        }
+        return true;
     }
 }

@@ -12,15 +12,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class AddUpdateCourseSceneController {
     @FXML private TextField courseNameTextField;
     //@FXML private TextField courseIdTextField;
+    @FXML private Label courseIdLabel;
     @FXML private TextField courseDescTextField;
     @FXML private TextField courseFeesTextField;
     @FXML private Button submitButton;
@@ -30,7 +33,7 @@ public class AddUpdateCourseSceneController {
     private void setCourseTableElem(CourseTableElem courseTableElem) {
         this.courseTableElem = courseTableElem;
         if(courseTableElem != null) {
-        //    courseIdTextField.setText(String.valueOf(courseTableElem.getCourseId()));
+            courseIdLabel.setText(String.valueOf(courseTableElem.getCourseId()));
             courseNameTextField.setText(courseTableElem.getCourseName());
             courseDescTextField.setText(courseTableElem.getCourseDesc());
             courseFeesTextField.setText(String.valueOf(courseTableElem.getCourseFees()));
@@ -62,6 +65,11 @@ public class AddUpdateCourseSceneController {
         //TODO: add confirmation box
         CourseEntity courseEntity = new CourseEntity();
         String courseName = courseNameTextField.getText();
+
+        if(CourseManager.checkCourseExists(courseName)){
+            Utils.showErrorDialog("Error Dialog", "", "Dublicate Course Name. This name already exists for some other course");
+            return;
+        }
         if(courseName.equals("")) {
             Utils.showErrorDialog("Error Dialog", "", "Course Name cannot be empty");
             return;

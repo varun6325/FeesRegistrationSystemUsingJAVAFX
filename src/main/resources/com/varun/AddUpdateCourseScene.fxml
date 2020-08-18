@@ -43,28 +43,21 @@
       
           <!-- Add Id Label -->
           <Label text="Course Id : " GridPane.columnIndex="0" GridPane.rowIndex="1"></Label>
-          <!-- Add Id Text Field -->
           <Label fx:id="courseIdLabel" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       
           <!-- Add Name Label -->
-          <Label text="Course Name : " GridPane.columnIndex="0" GridPane.rowIndex="2">
-    </Label>
-          <!-- Add Name Text Field -->
+          <Label text="Course Name : " GridPane.columnIndex="0" GridPane.rowIndex="2"></Label>
           <TextField fx:id="courseNameTextField" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       
       
           <!-- Add Description Label -->
-          <Label text="Course Description" GridPane.columnIndex="0" GridPane.rowIndex="3">
-    </Label>
-          <!-- Add Description Text Field -->
+          <Label text="Course Description" GridPane.columnIndex="0" GridPane.rowIndex="3"></Label>
           <TextField fx:id="courseDescTextField" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       
       
       
           <!-- Add Fees Label -->
-          <Label text="Fees" GridPane.columnIndex="0" GridPane.rowIndex="4">
-    </Label>
-          <!-- Add Fees Field -->
+          <Label text="Fees" GridPane.columnIndex="0" GridPane.rowIndex="4"></Label>
           <TextField fx:id="courseFeesTextField" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       
       

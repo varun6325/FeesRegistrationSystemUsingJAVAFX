@@ -25,7 +25,7 @@ public class CourseEntity {
     }
 
     @Basic
-    @Column(name = "courseName")
+    @Column(name = "courseName", unique = true)
     public String getCourseName() {
         return courseName;
     }
