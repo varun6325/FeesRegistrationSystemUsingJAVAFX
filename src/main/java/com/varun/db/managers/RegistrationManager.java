@@ -50,12 +50,14 @@ public class RegistrationManager {
         return res;
     }
     public static RegistrationEntity getRegistrationWithInstallationsFromEntitiy(RegistrationEntity registrationEntity){
-        try{
-            registrationEntity.getInstallmentsByRegistrationId().size();
-            return registrationEntity;// we already have the installments with respect to this registration, so no need to do it again
-        }catch(LazyInitializationException ex){
-            // installments need to be captured from the db
-            System.out.println(ex);
+        if(registrationEntity.getInstallmentsByRegistrationId() != null) {
+            try {
+                registrationEntity.getInstallmentsByRegistrationId().size();
+                return registrationEntity;// we already have the installments with respect to this registration, so no need to do it again
+            } catch (LazyInitializationException ex) {
+                // installments need to be captured from the db
+                System.out.println(ex);
+            }
         }
         EntityManager entityManager =null;
         try {
@@ -110,14 +112,14 @@ public class RegistrationManager {
         return res;
     }
 
-    public static List<RegistrationEntity> getRegistrationsHavingInstallmentDueDateBetween(Date since, Date upto){
+    public static List<RegistrationEntity> getRegistrationsHavingInstallmentDueDateBetween(Date since, Date upto, boolean alreadyPaid){
         List<RegistrationEntity> registrationEntities = null;
         EntityManager entityManager = null;
         try {
             entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
             TypedQuery<RegistrationEntity> registrationEntityTypedQuery = entityManager.createQuery("Select i.registrationByRegistrationId from InstallmentEntity i " +
-                   "where i.installmentDueDate BETWEEN :since and :upto", RegistrationEntity.class);
-            registrationEntityTypedQuery.setParameter("since", since, TemporalType.DATE).setParameter("upto", upto, TemporalType.DATE);
+                   "where i.installmentDueDate BETWEEN :since and :upto and i.instalmentIsDone = :alreadyPaid", RegistrationEntity.class);
+            registrationEntityTypedQuery.setParameter("since", since, TemporalType.DATE).setParameter("upto", upto, TemporalType.DATE).setParameter("alreadyPaid", alreadyPaid);
             registrationEntities = registrationEntityTypedQuery.getResultList();
         }catch(Exception ex){
             System.out.println(ex);

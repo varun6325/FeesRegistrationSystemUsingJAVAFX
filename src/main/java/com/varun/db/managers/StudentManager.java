@@ -97,13 +97,16 @@ public class StudentManager {
         }
         return res;
     }
+    //get registration details for student. If we have already captured the details before then return those only.
     public static StudentEntity getStudentWithRegistrationsFromEntity(StudentEntity studentEntity){
-        try{
-            studentEntity.getRegistrationsByStudentId().size();
-            return studentEntity;// we already have the registrations with respect to this student, so no need to do it again
-        }catch(LazyInitializationException ex){
-            System.out.println(ex);
-            // registrations need to be captured from the db
+        if(studentEntity.getRegistrationsByStudentId() != null) {
+            try {
+                studentEntity.getRegistrationsByStudentId().size();
+                return studentEntity;// we already have the registrations with respect to this student, so no need to do it again
+            } catch (LazyInitializationException ex) {
+                System.out.println(ex);
+                // registrations need to be captured from the db
+            }
         }
         EntityManager entityManager = null;
         try {
@@ -121,6 +124,7 @@ public class StudentManager {
         }
         return studentEntity;
     }
+
     public static StudentEntity getStudentWithRegistrationsFromId(int id){
         StudentEntity res = StudentManager.getStudentWithoutRegistrationsFromId(id);
         if(res == null)

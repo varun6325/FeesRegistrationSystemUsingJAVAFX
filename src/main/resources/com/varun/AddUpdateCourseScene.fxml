@@ -42,10 +42,9 @@
           </Label>
       
           <!-- Add Id Label -->
-          <Label text="Course Id : " GridPane.columnIndex="0" GridPane.rowIndex="1">
-    </Label>
+          <Label text="Course Id : " GridPane.columnIndex="0" GridPane.rowIndex="1"></Label>
           <!-- Add Id Text Field -->
-          <TextField fx:id="courseIdTextField" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+          <Label fx:id="courseIdLabel" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       
           <!-- Add Name Label -->
           <Label text="Course Name : " GridPane.columnIndex="0" GridPane.rowIndex="2">

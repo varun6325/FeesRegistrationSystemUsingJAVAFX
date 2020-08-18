@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 
 public class AddUpdateCourseSceneController {
     @FXML private TextField courseNameTextField;
-    @FXML private TextField courseIdTextField;
+    //@FXML private TextField courseIdTextField;
     @FXML private TextField courseDescTextField;
     @FXML private TextField courseFeesTextField;
     @FXML private Button submitButton;
@@ -30,7 +30,7 @@ public class AddUpdateCourseSceneController {
     private void setCourseTableElem(CourseTableElem courseTableElem) {
         this.courseTableElem = courseTableElem;
         if(courseTableElem != null) {
-            courseIdTextField.setText(String.valueOf(courseTableElem.getCourseId()));
+        //    courseIdTextField.setText(String.valueOf(courseTableElem.getCourseId()));
             courseNameTextField.setText(courseTableElem.getCourseName());
             courseDescTextField.setText(courseTableElem.getCourseDesc());
             courseFeesTextField.setText(String.valueOf(courseTableElem.getCourseFees()));
@@ -38,15 +38,13 @@ public class AddUpdateCourseSceneController {
     }
 
     @FXML private void initialize(){
-        courseIdTextField.setEditable(false);
+        //courseIdTextField.setEditable(false);
         courseFeesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             onCourseFeesTextChanged(oldValue, newValue);
         });
     }
     public static void display(String previousSceneName, Scene previousScene, CourseTableElem courseTableElem) throws IOException{
         //This scene can only be called by Course Details Scene
-//        while( Utils.sceneStack.size() > 1 && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.courseDetailsString))
-//            Utils.sceneStack.pop();
         if(previousSceneName.equals(ParameterStrings.courseDetailsString))
             Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateCourseScene" + ".fxml"));

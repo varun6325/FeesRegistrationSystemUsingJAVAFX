@@ -18,9 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Pair;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class NotificationSceneController {
 
@@ -44,6 +42,14 @@ public class NotificationSceneController {
         fillTableView(since, upto);
     }
     public static NotificationSceneController display(String previousSceneName, Scene previousScene) throws IOException {
+        //This scene can be called either by home scene or after addn/updatn of a registration ie AddUpdateRegistrationScene
+        if(Utils.sceneStack.empty())
+            Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
+        else{
+            while(!Utils.sceneStack.empty() && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.homeString))
+                Utils.sceneStack.pop();
+        }
+
         while(!Utils.sceneStack.empty() && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.homeString))
             Utils.sceneStack.pop();
         if(Utils.sceneStack.empty() && previousSceneName.equals(ParameterStrings.homeString))
@@ -87,7 +93,7 @@ public class NotificationSceneController {
                         //NOTE: at this point registration entity would be without the installations info - they would be needed to load lazily when required
                         registrationEntity = RegistrationManager.getRegistrationWithStudentInfoFromEntitiy(registrationEntity);
                         if(registrationEntity != null)
-                            AddUpdateRegistrationSceneController.display(ParameterStrings.addUpdateStudentString, notificationTableView.getScene(), registrationEntity.getStudentByStudentId(), registrationEntity);
+                            AddUpdateRegistrationSceneController.display(ParameterStrings.notificationString, notificationTableView.getScene(), registrationEntity.getStudentByStudentId(), registrationEntity);
                         else
                             System.out.println("Registration Entity can't be null");
                     }catch(IOException ex){
@@ -124,16 +130,19 @@ public class NotificationSceneController {
             Utils.showErrorDialog("Error Dialog", null, "Start Date should always be smaller than End Date");
             return;
         }
-        registrationEntityList = RegistrationManager.getRegistrationsHavingInstallmentDueDateBetween(since, upto);
+        registrationEntityList = RegistrationManager.getRegistrationsHavingInstallmentDueDateBetween(since, upto, false);
         ObservableList<RegistrationTableElem> registrationTableElems = FXCollections.observableArrayList();
-
+        Set<Integer> registrationIdset = new HashSet();
         for(int i = 0; i < registrationEntityList.size(); i++){
             RegistrationEntity registrationEntity = registrationEntityList.get(i);
-            registrationEntity = RegistrationManager.getRegistrationWithStudentInfoFromEntitiy(registrationEntity);
-            String studentName = registrationEntity.getStudentByStudentId().getStudentFName() + " " + registrationEntity.getStudentByStudentId().getStudentMName() + " " + registrationEntity.getStudentByStudentId().getStudentLName();
-            RegistrationTableElem registrationTableElem = DBUtils.getRegistrationTableElemFromRegistrationEntity(registrationEntity, studentName);
-            registrationTableElems.add(registrationTableElem);
-            registrationEntityList.set(i, registrationEntity);
+            if(registrationIdset.add(registrationEntity.getRegistrationId())) {
+                registrationEntity = RegistrationManager.getRegistrationWithStudentInfoFromEntitiy(registrationEntity);
+                String studentName = registrationEntity.getStudentByStudentId().getStudentFName() + " " + registrationEntity.getStudentByStudentId().getStudentMName() + " " + registrationEntity.getStudentByStudentId().getStudentLName();
+                RegistrationTableElem registrationTableElem = DBUtils.getRegistrationTableElemFromRegistrationEntity(registrationEntity, studentName);
+                registrationTableElems.add(registrationTableElem);
+                registrationEntityList.set(i, registrationEntity);
+            }else
+                registrationEntityList.remove(i);
         }
         notificationTableView.setItems(registrationTableElems);
     }

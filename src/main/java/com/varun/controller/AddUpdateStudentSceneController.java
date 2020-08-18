@@ -4,6 +4,7 @@ import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.db.DBUtils;
+import com.varun.db.managers.RegistrationManager;
 import com.varun.db.managers.StudentManager;
 import com.varun.db.models.RegistrationEntity;
 import com.varun.db.models.StudentEntity;
@@ -105,6 +106,11 @@ public class AddUpdateStudentSceneController {
             // always get fresh registrations for the db for the student
             studentEntity = StudentManager.getStudentWithRegistrationsFromEntity(studentEntity);
             registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
+            for(int i = 0; i < registrationEntities.size(); i++){
+                RegistrationEntity registrationEntity = registrationEntities.get(i);
+                registrationEntity = RegistrationManager.getRegistrationById(registrationEntity.getRegistrationId());
+                registrationEntities.set(i, registrationEntity);
+            }
             registrationEntityIterator = registrationEntities.iterator();
 
             ObservableList<RegistrationTableElem> registrationTableElems = FXCollections.observableArrayList();
@@ -121,9 +127,14 @@ public class AddUpdateStudentSceneController {
     }
 
     public static AddUpdateStudentSceneController display(String previousSceneName, Scene previousScene, StudentEntity studentEntity) throws IOException {
-        while( Utils.sceneStack.size() > 1 && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.studentDetailsString))
-            Utils.sceneStack.pop();
-        Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
+        //This scene can be called either by SutdentDetails scene or after addn/updatn of a registration ie AddUpdateRegistrationScene
+
+        if(previousSceneName.equals(ParameterStrings.studentDetailsString))
+            Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
+        else{
+            while(!Utils.sceneStack.peek().getKey().equals(ParameterStrings.studentDetailsString))
+                Utils.sceneStack.pop();
+        }
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateStudentScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
         AddUpdateStudentSceneController addUpdateStudentSceneController = fxmlLoader.getController();

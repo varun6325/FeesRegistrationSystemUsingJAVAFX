@@ -2,6 +2,7 @@ package com.varun.db.models;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -19,7 +20,9 @@ public class RegistrationEntity {
     private Collection<InstallmentEntity> installmentsByRegistrationId;
     private StudentEntity studentByStudentId;
     private CourseEntity courseByCourseId;
-
+    public RegistrationEntity(){
+        installmentsByRegistrationId = new ArrayList<>();
+    }
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "registrationId", insertable=false, updatable=false)

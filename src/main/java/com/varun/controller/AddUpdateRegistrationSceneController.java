@@ -52,6 +52,12 @@ public class AddUpdateRegistrationSceneController {
     @FXML private TableColumn<InstallmentTableElem, Boolean> alreadPaidCol;
     @FXML private TableColumn<InstallmentTableElem, Date> dueDateCol;
     private StudentEntity studentEntity = null;
+    private String previousSceneName;
+
+    public void setPreviousSceneName(String previousSceneName) {
+        this.previousSceneName = previousSceneName;
+    }
+
     private List<CourseEntity> courseEntities;
     private RegistrationEntity registrationEntity;
     int indexForNewInstallments = 0; // this is used for setting the installment id as -ve so that it can be used to identify new installment vs modified installments
@@ -82,7 +88,7 @@ public class AddUpdateRegistrationSceneController {
                 Iterator<CourseEntity> iterator = courseEntities.iterator();
                 while(iterator.hasNext()){
                     courseEntity = iterator.next();
-                    if(courseEntity.getCourseName().equals(courseNameChoiceBox.getValue()))
+                    if(courseEntity.getCourseName().equals(new_value))
                         break;
                 }
 //                if(courseEntity.getCourseId() == registrationEntity.getCourseId()){
@@ -117,6 +123,7 @@ public class AddUpdateRegistrationSceneController {
                                 break;
                             }
                         }
+                        registrationEntity.getInstallmentsByRegistrationId().remove(ent);
                         Dialog dialog = showAddUpdateInstallmentDialog(ent);
                         Optional<InstallmentEntity> result = dialog.showAndWait();
 
@@ -124,10 +131,11 @@ public class AddUpdateRegistrationSceneController {
                             InstallmentEntity installmentEntity = result.get();
                             installmentEntity.setInstallmentId(ent.getInstallmentId());
                             installmentEntity.setInstallmentNo(ent.getInstallmentNo());
-                            registrationEntity.getInstallmentsByRegistrationId().remove(ent);
+                            //registrationEntity.getInstallmentsByRegistrationId().remove(ent);
                             registrationEntity.getInstallmentsByRegistrationId().add(installmentEntity);
                             fillInstallmentTableView();
                         }else{
+                            registrationEntity.getInstallmentsByRegistrationId().add(ent);
                             System.out.println("result is not present in dialog");
                         }
                     }catch(Exception ex){
@@ -188,17 +196,16 @@ public class AddUpdateRegistrationSceneController {
         studentNameLabel.setText(studentEntity.getStudentFName() + " " + studentEntity.getStudentMName() + " " + studentEntity.getStudentLName());
     }
     public static AddUpdateRegistrationSceneController display(String previousSceneName, Scene previousScene, StudentEntity studentEntity, RegistrationEntity registrationEntity) throws IOException {
-        if(previousSceneName.equals(ParameterStrings.addUpdateStudentString))
-            Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
-        else if(previousSceneName.equals(ParameterStrings.addUpdateInstallmentString))
-            while (!Utils.sceneStack.peek().getKey().equals(ParameterStrings.addUpdateStudentString))
-                Utils.sceneStack.pop();
+        //This scene can be called either by AddStudentScene or NotificationsScene
+        Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
+
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateRegistrationScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
         AddUpdateRegistrationSceneController addUpdateRegistrationSceneController =  fxmlLoader.getController();
         addUpdateRegistrationSceneController.setStudentEntity(studentEntity);
         addUpdateRegistrationSceneController.setRegistrationEntity(registrationEntity);
         addUpdateRegistrationSceneController.fillScene();
+        addUpdateRegistrationSceneController.setPreviousSceneName(previousSceneName);
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
         newScene.getStylesheets().add(addUpdateRegistrationSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
@@ -243,14 +250,19 @@ public class AddUpdateRegistrationSceneController {
 
             //registrationEntity.setRegistrationDate(null);
             //registrationEntity.setInstallmentsByRegistrationId(installmentEntities);
+            Double totalInstallmentAmount = 0.0;
             for(InstallmentEntity installmentEntity : registrationEntity.getInstallmentsByRegistrationId()){
                 if(installmentEntity.getInstallmentId() < 0){
                     //installment no is not implemented as for now.
                     installmentEntity.setInstallmentId(0);
                 }
+                totalInstallmentAmount += installmentEntity.getIntallmentAmount().doubleValue();
                 installmentEntity.setRegistrationByRegistrationId(registrationEntity);
             }
-
+            if(totalInstallmentAmount != Double.parseDouble(finalFeesLabel.getText())) {
+                Utils.showErrorDialog("Dialog Error", "", "Total installment amount is not equal to total fees to be paid");
+                return;
+            }
             System.out.println("update registration");
             RegistrationManager.updateRegistration(registrationEntity);
             //studentEntity = StudentManager.updateStudent(studentEntity);
@@ -261,7 +273,12 @@ public class AddUpdateRegistrationSceneController {
             RegistrationManager.addRegistration(registrationEntity);
             //studentEntity = StudentManager.updateStudent(studentEntity);
         }
-        AddUpdateStudentSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene(), studentEntity);
+        if(previousSceneName.equals(ParameterStrings.addUpdateStudentString))
+            AddUpdateStudentSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene(), studentEntity);
+        else if(previousSceneName.equals(ParameterStrings.notificationString))
+            NotificationSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene());
+        else
+            System.out.println("Unreachable code: Previous scene name can never be besides " + ParameterStrings.addUpdateStudentString + " OR " + ParameterStrings.notificationString);
     }
     @FXML
     private void onAddInstallmentButtonClicked() throws IOException {
@@ -338,7 +355,11 @@ public class AddUpdateRegistrationSceneController {
             amtTF.setText("0.0");
         }
 
-        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        ButtonType addButtonType;
+        if(installmentEntity == null)
+            addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        else
+            addButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(addButtonType);
 
         Button addButton = (Button)dialog.getDialogPane().lookupButton(addButtonType);
@@ -362,6 +383,7 @@ public class AddUpdateRegistrationSceneController {
             for (InstallmentEntity entity : registrationEntity.getInstallmentsByRegistrationId()) {
                 totalInstallmentsAmount += entity.getIntallmentAmount().doubleValue();
             }
+            totalInstallmentsAmount += Double.parseDouble(amtTF.getText());
             Double amountPending = Double.parseDouble(finalFeesLabel.getText()) - totalInstallmentsAmount;
             if(amountPending < 0.0){
                 Utils.showErrorDialog("Dialog Error", "", "Installment amount is greater than the pending amount");

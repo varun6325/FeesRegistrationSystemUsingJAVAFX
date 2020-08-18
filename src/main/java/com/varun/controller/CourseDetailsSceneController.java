@@ -96,10 +96,13 @@ public class CourseDetailsSceneController {
     }
 
     public static void display(String previousSceneName, Scene previousScene) throws IOException {
-        while(!Utils.sceneStack.empty() && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.homeString))
-            Utils.sceneStack.pop();
-        if(Utils.sceneStack.empty() && previousSceneName.equals(ParameterStrings.homeString))
+        //This scene can be called either by home scene or after addn/updatn of a course ie AddUpdateCourseScene
+        if(Utils.sceneStack.empty())
             Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
+        else{
+            while(!Utils.sceneStack.empty() && !Utils.sceneStack.peek().getKey().equals(ParameterStrings.homeString))
+                Utils.sceneStack.pop();
+        }
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("CourseDetailsScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
         CourseDetailsSceneController courseDetailsSceneController =  fxmlLoader.getController();
