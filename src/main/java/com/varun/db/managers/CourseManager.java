@@ -29,7 +29,7 @@ public class CourseManager {
             if(entityManager != null)
                 entityManager.close();
         }
-        System.out.println(courseEntities.size() + " " + courseEntities.get(0));
+        System.out.println(courseEntities.size());
         return courseEntities;
     }
     public static ObservableList<CourseTableElem> getCourseTableElemList() {

@@ -28,7 +28,7 @@ public class StudentManager {
             if(entityManager != null)
                 entityManager.close();
         }
-        System.out.println(studentEntities.size() + " " + studentEntities.get(0));
+        System.out.println(studentEntities.size());
         return studentEntities;
     }
 
