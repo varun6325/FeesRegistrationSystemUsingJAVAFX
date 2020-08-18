@@ -4,6 +4,7 @@ import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,14 +19,13 @@ public class HomeSceneController {
     @FXML private void initialize(){
 
     }
-
-    public static Parent getParent() throws IOException{
-        Parent parent = Utils.loadFXML("HomeScene");
-        return parent;
-    }
     public static void display() throws IOException {
-        Parent parent = Utils.loadFXML("HomeScene");
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("HomeScene" + ".fxml"));
+        Parent parent = fxmlLoader.load();
+        HomeSceneController homeSceneController =  fxmlLoader.getController();
         Scene newScene = new Scene(parent);
+        newScene.getStylesheets().add(homeSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
+
         App.setScene(newScene);
 //        App.setRoot(parent);
     }

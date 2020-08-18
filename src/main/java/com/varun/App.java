@@ -19,21 +19,20 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(HomeSceneController.getParent());
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("HomeScene" + ".fxml"));
+        Parent parent = fxmlLoader.load();
+        HomeSceneController homeSceneController =  fxmlLoader.getController();
+        scene = new Scene(parent);
+        scene.getStylesheets().add(homeSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
         stage.setScene(scene);
         stage.show();
         App.stage = stage ;
         stage.sizeToScene();
     }
-
     static public void setScene(Scene scene){
         stage.setScene(scene);
         stage.sizeToScene();
     }
-//    static public void setRoot(Parent parent){
-//        scene.setRoot(parent);
-//        App.stage.sizeToScene();
-//    }
     public static void main(String[] args) {
         launch();
     }

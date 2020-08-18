@@ -51,8 +51,11 @@ public class AddUpdateCourseSceneController {
             Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateCourseScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
-        ((AddUpdateCourseSceneController)(fxmlLoader.getController())).setCourseTableElem(courseTableElem);
+        AddUpdateCourseSceneController addUpdateCourseSceneController = fxmlLoader.getController();
+        addUpdateCourseSceneController.setCourseTableElem(courseTableElem);
         Scene newScene = new Scene(parent);
+        newScene.getStylesheets().add(addUpdateCourseSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
+
         App.setScene(newScene);
     }
     @FXML

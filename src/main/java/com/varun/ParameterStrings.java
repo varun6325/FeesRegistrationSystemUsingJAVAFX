@@ -9,4 +9,9 @@ public class ParameterStrings {
     public static final String notificationString = "Notification";
     public static final String addUpdateRegistrationString = "RegistrationDetails";
     public static final String addUpdateInstallmentString = "InstallmentDetails";
+    public static final String cssResource = "/com/varun/css/style.css";
+    public static final Integer prefHeight = 700;
+    public static final Integer prefWidth = 1100;
+
+
 }

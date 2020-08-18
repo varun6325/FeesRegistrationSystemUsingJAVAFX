@@ -9,6 +9,7 @@ import com.varun.fxmlmodels.CourseTableElem;
 import com.varun.fxmlmodels.StudentTableElem;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -74,7 +75,7 @@ public class StudentDetailsSceneController {
         });
 
         searchChoiceBox.getItems().addAll("student name", "student email");// to add a new filter for search, add here
-        searchChoiceBox.setValue("studentName");
+        searchChoiceBox.setValue("student name");
         searchTextField.setPromptText("Search here!");
         searchTextField.setOnKeyReleased(keyEvent ->
         {
@@ -120,8 +121,12 @@ public class StudentDetailsSceneController {
             Utils.sceneStack.pop();
         if(Utils.sceneStack.empty() && previousSceneName.equals(ParameterStrings.homeString))
             Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
-        Parent parent = Utils.loadFXML("StudentDetailsScene");
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("StudentDetailsScene" + ".fxml"));
+        Parent parent = fxmlLoader.load();
+        StudentDetailsSceneController studentDetailsSceneController =  fxmlLoader.getController();
         Scene newScene = new Scene(parent);
+        newScene.getStylesheets().add(studentDetailsSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
+
         App.setScene(newScene);
     }
 

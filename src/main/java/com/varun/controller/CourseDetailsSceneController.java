@@ -7,6 +7,7 @@ import com.varun.db.managers.CourseManager;
 import com.varun.fxmlmodels.CourseTableElem;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.net.URL;
 
 
 public class CourseDetailsSceneController {
@@ -55,7 +57,7 @@ public class CourseDetailsSceneController {
             return row ;
         });
         searchChoiceBox.getItems().addAll("course name", "course desc");// to add a new filter for search, add here
-        searchChoiceBox.setValue("courseName");
+        searchChoiceBox.setValue("course name");
         searchTextField.setPromptText("Search here!");
         searchTextField.setOnKeyReleased(keyEvent ->
         {
@@ -98,9 +100,15 @@ public class CourseDetailsSceneController {
             Utils.sceneStack.pop();
         if(Utils.sceneStack.empty() && previousSceneName.equals(ParameterStrings.homeString))
             Utils.sceneStack.push(new Pair(previousSceneName, previousScene));
-        Parent parent = Utils.loadFXML("CourseDetailsScene");
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("CourseDetailsScene" + ".fxml"));
+        Parent parent = fxmlLoader.load();
+        CourseDetailsSceneController courseDetailsSceneController =  fxmlLoader.getController();
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
+        URL url = courseDetailsSceneController.getClass().getResource(ParameterStrings.cssResource);
+        String str = url.toExternalForm();
+        newScene.getStylesheets().add(str);
+
         App.setScene(newScene);
 
     }

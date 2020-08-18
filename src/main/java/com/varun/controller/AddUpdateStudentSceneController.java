@@ -131,6 +131,8 @@ public class AddUpdateStudentSceneController {
         addUpdateStudentSceneController.fillScene();
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
+        newScene.getStylesheets().add(addUpdateStudentSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
+
         App.setScene(newScene);
         return addUpdateStudentSceneController;
     }

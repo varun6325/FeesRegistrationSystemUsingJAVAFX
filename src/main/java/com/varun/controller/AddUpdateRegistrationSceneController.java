@@ -201,6 +201,7 @@ public class AddUpdateRegistrationSceneController {
         addUpdateRegistrationSceneController.fillScene();
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
+        newScene.getStylesheets().add(addUpdateRegistrationSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
         App.setScene(newScene);
         return addUpdateRegistrationSceneController;
     }

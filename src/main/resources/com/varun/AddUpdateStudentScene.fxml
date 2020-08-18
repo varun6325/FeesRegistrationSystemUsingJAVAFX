@@ -17,7 +17,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import com.varun.ParameterStrings?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.varun.controller.AddUpdateStudentSceneController">
+    <prefHeight>
+        <ParameterStrings fx:constant="prefHeight" />
+    </prefHeight>
+    <prefWidth>
+        <ParameterStrings fx:constant="prefWidth" />
+    </prefWidth>
    <center>
       <ScrollPane fx:id="scrollPane" hvalue="1.0">
          <content>

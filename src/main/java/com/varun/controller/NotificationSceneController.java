@@ -55,6 +55,8 @@ public class NotificationSceneController {
         notificationSceneController.fillScene();
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
+        newScene.getStylesheets().add(notificationSceneController.getClass().getResource(ParameterStrings.cssResource).toExternalForm());
+
         App.setScene(newScene);
         return notificationSceneController;
     }

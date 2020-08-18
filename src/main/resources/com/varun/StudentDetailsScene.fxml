@@ -13,7 +13,14 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextField?>
+<?import com.varun.ParameterStrings?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.varun.controller.StudentDetailsSceneController">
+    <prefHeight>
+        <ParameterStrings fx:constant="prefHeight" />
+    </prefHeight>
+    <prefWidth>
+        <ParameterStrings fx:constant="prefWidth" />
+    </prefWidth>
    <center>
       <AnchorPane fx:id="parentPane">
           <padding>
@@ -53,9 +60,9 @@
                     </GridPane.margin>
                 </Button>
                 <Region HBox.hgrow="ALWAYS" />
-                <ChoiceBox fx:id="searchChoiceBox" prefHeight="40.0" prefWidth="100.0"/>
+                <ChoiceBox fx:id="searchChoiceBox" prefHeight="40.0" prefWidth="120.0"/>
                 <Region prefWidth="10" />
-                <TextField fx:id="searchTextField" prefHeight="40.0" prefWidth="150.0"/>
+                <TextField fx:id="searchTextField" prefHeight="40.0" prefWidth="200.0"/>
                 <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="homeButton" defaultButton="true" onAction="#onHomeButtonClicked" prefHeight="40" prefWidth="100" text="Home" >
                     <GridPane.margin>
