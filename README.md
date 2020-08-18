@@ -11,7 +11,7 @@ You can do the following:
 
 ## Tools required: 
 * Java 11 - version used for development and testing is 11.0.7
-* maven - version used for development is 3.6.2
+* maven - version used for development is 3.6.3
 * mariadb - version used is 10.4.13
 
 ## How to run: 
