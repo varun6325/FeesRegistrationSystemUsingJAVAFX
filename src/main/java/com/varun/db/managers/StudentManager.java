@@ -12,6 +12,8 @@ import org.hibernate.proxy.LazyInitializer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.Query;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 public class StudentManager {
@@ -82,6 +84,32 @@ public class StudentManager {
                 entityManager.close();
         }
         return res;
+    }
+
+
+    public static int deleteStudentById(int id){
+        EntityManager entityManager = null;
+        try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+            entityManager.getTransaction().begin();
+            Query query = entityManager.createQuery("DELETE FROM StudentEntity s WHERE s.studentId = :id");
+            int delCount = query.setParameter("id", id).executeUpdate();
+            entityManager.getTransaction().commit();
+            System.out.println(delCount + " no of students deleted with respect to course id : " + id);
+            return 1;
+        }catch(Exception ex){
+            if(entityManager != null && entityManager.getTransaction().isActive())
+                entityManager.getTransaction().rollback();
+            Throwable t = ex.getCause();
+            while(t!= null && !(t instanceof SQLIntegrityConstraintViolationException))
+                t = t.getCause();
+            if(t instanceof  SQLIntegrityConstraintViolationException)
+                return 0;
+            return -1;
+        }finally {
+            if(entityManager != null)
+                entityManager.close();
+        }
     }
     public static StudentEntity getStudentWithoutRegistrationsFromId(int id){
         StudentEntity res = null;

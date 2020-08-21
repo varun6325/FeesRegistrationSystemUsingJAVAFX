@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -16,10 +17,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,6 +86,19 @@ public class Utils {
         return ld;
     }
 
+    public static boolean showsConfirmDialog(String title, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText("");
+        alert.setContentText(contentText);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if ((result.isPresent()) && (result.get() == ButtonType.OK)) {
+            return true;
+        }else
+            return false;
+    }
     public static void showErrorDialog(String title, String headerText, String contentText){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -96,6 +107,7 @@ public class Utils {
 
         alert.showAndWait();
     }
+
 
     public static boolean regexMatch(String input, String regex, boolean isCaseInSensitive){
         Pattern p;

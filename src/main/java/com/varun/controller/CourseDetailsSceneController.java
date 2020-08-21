@@ -4,6 +4,7 @@ import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
 import com.varun.db.managers.CourseManager;
+import com.varun.db.managers.RegistrationManager;
 import com.varun.fxmlmodels.CourseTableElem;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
@@ -29,13 +30,13 @@ public class CourseDetailsSceneController {
     @FXML private TableColumn<CourseTableElem, Double> courseFees;
     @FXML private ChoiceBox<String> searchChoiceBox;
     @FXML private TextField searchTextField;
-
+    private FilteredList<CourseTableElem> flCourses;
     @FXML private void initialize(){
         courseId.setCellValueFactory(new PropertyValueFactory<>("courseId"));
         courseName.setCellValueFactory(new PropertyValueFactory<>("courseName"));
         courseDesc.setCellValueFactory(new PropertyValueFactory<>("courseDesc"));
         courseFees.setCellValueFactory(new PropertyValueFactory<>("courseFees"));
-        FilteredList<CourseTableElem> flCourses = new FilteredList(CourseManager.getCourseTableElemList(), p -> true);
+        flCourses = new FilteredList(CourseManager.getCourseTableElemList(), p -> true);
 
         courseTableView.setItems(flCourses);
         courseTableView.setPlaceholder(new Label("No courses present in the system to display"));
@@ -126,6 +127,23 @@ public class CourseDetailsSceneController {
     @FXML
     private void onAddCourseButtonClicked() throws IOException{
         AddUpdateCourseSceneController.display(ParameterStrings.courseDetailsString, courseTableView.getScene(), null);
+    }
+    @FXML
+    private void onDeleteCourseButtonClicked() {
+        if(Utils.showsConfirmDialog("", "Are you sure you want to delete this course ?")) {
+            CourseTableElem courseTableElem = courseTableView.getSelectionModel().getSelectedItem();
+            if(courseTableElem != null) {
+                int ret = CourseManager.deleteCourseById(courseTableElem.getCourseId());
+                if (ret == 1) {
+                    //flCourses.remove(courseTableElem);
+                    flCourses.getSource().remove(courseTableElem);
+                    courseTableView.setItems(flCourses);
+                } else if (ret == 0)
+                    Utils.showErrorDialog("Error Dialog", "", "A registration already exists for this course. So, the course can't be deleted");
+                else
+                    Utils.showErrorDialog("Error Dialog", "Contact the administrator", "Some error occurred. Can't delete this course. ");
+            }
+        }
     }
 
 }

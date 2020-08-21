@@ -3,6 +3,7 @@ package com.varun.controller;
 import com.varun.App;
 import com.varun.ParameterStrings;
 import com.varun.Utils;
+import com.varun.db.managers.CourseManager;
 import com.varun.db.managers.StudentManager;
 import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.CourseTableElem;
@@ -32,7 +33,7 @@ public class StudentDetailsSceneController {
     @FXML private TableColumn<StudentTableElem, String> studentEmail;
     @FXML private ChoiceBox<String> searchChoiceBox;
     @FXML private TextField searchTextField;
-
+    private FilteredList<StudentTableElem> flStudents;
     @FXML private void initialize(){
         studentId.setCellValueFactory(new PropertyValueFactory<>("studentId"));
         studentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
@@ -52,7 +53,7 @@ public class StudentDetailsSceneController {
         });
         studentEmail.setCellValueFactory(new PropertyValueFactory<>("studentEmail"));
         studentPhNo.setCellValueFactory(new PropertyValueFactory<>("studentPhNo"));
-        FilteredList<StudentTableElem> flStudents = new FilteredList(StudentManager.getStudentTableElemList(), p -> true);
+        flStudents = new FilteredList(StudentManager.getStudentTableElemList(), p -> true);
         studentTableView.setItems(flStudents);
         studentTableView.setPlaceholder(new Label("No student admitted into the system"));
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -140,6 +141,23 @@ public class StudentDetailsSceneController {
     @FXML
     private void onHomeButtonClicked() throws IOException{
         Utils.homeButtonFunctionality();
+    }
+    @FXML
+    private void onDeleteStudentButtonClicked() throws IOException {
+        if(Utils.showsConfirmDialog("", "Are you sure you want to delete this student ?")) {
+            StudentTableElem studentTableElem = studentTableView.getSelectionModel().getSelectedItem();
+            if(studentTableElem != null) {
+                int ret = StudentManager.deleteStudentById(studentTableElem.getStudentId());
+                if (ret == 1) {
+                    //flCourses.remove(courseTableElem);
+                    flStudents.getSource().remove(studentTableElem);
+                    studentTableView.setItems(flStudents);
+                } else if (ret == 0)
+                    Utils.showErrorDialog("Error Dialog", "", "A registration already exists for this student. So, the student can't be deleted");
+                else
+                    Utils.showErrorDialog("Error Dialog", "Contact the administrator", "Some error occurred. Can't delete this student. ");
+            }
+        }
     }
     @FXML
     private void onAddStudentButtonClicked() throws IOException{

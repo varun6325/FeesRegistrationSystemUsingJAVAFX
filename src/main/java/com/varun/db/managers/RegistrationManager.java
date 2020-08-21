@@ -6,9 +6,11 @@ import com.varun.db.models.StudentEntity;
 import org.hibernate.LazyInitializationException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import java.sql.Date;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 public class RegistrationManager {
@@ -48,6 +50,31 @@ public class RegistrationManager {
                 entityManager.close();
         }
         return res;
+    }
+
+    public static int deleteRegistrationById(int id){
+        EntityManager entityManager = null;
+        try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+            entityManager.getTransaction().begin();
+            Query query = entityManager.createQuery("DELETE FROM RegistrationEntity r WHERE r.registrationId = :id");
+            int delCount = query.setParameter("id", id).executeUpdate();
+            entityManager.getTransaction().commit();
+            System.out.println(delCount + " no of registrations deleted with respect to course id : " + id);
+            return 1;
+        }catch(Exception ex){
+            if(entityManager != null && entityManager.getTransaction().isActive())
+                entityManager.getTransaction().rollback();
+            Throwable t = ex.getCause();
+            while(t!= null && !(t instanceof SQLIntegrityConstraintViolationException))
+                t = t.getCause();
+            if(t instanceof  SQLIntegrityConstraintViolationException)
+                return 0;
+            return -1;
+        }finally {
+            if(entityManager != null)
+                entityManager.close();
+        }
     }
     public static RegistrationEntity getRegistrationWithInstallationsFromEntitiy(RegistrationEntity registrationEntity){
         if(registrationEntity.getInstallmentsByRegistrationId() != null) {
