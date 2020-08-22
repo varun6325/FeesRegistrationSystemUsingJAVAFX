@@ -130,20 +130,21 @@ public class CourseDetailsSceneController {
     }
     @FXML
     private void onDeleteCourseButtonClicked() {
-        if(Utils.showsConfirmDialog("", "Are you sure you want to delete this course ?")) {
-            CourseTableElem courseTableElem = courseTableView.getSelectionModel().getSelectedItem();
-            if(courseTableElem != null) {
-                int ret = CourseManager.deleteCourseById(courseTableElem.getCourseId());
-                if (ret == 1) {
-                    //flCourses.remove(courseTableElem);
-                    flCourses.getSource().remove(courseTableElem);
-                    courseTableView.setItems(flCourses);
-                } else if (ret == 0)
-                    Utils.showErrorDialog("Error Dialog", "", "A registration already exists for this course. So, the course can't be deleted");
-                else
-                    Utils.showErrorDialog("Error Dialog", "Contact the administrator", "Some error occurred. Can't delete this course. ");
+        CourseTableElem courseTableElem = courseTableView.getSelectionModel().getSelectedItem();
+        if(courseTableElem != null) {
+            if(Utils.showsConfirmDialog("", "Are you sure you want to delete this course ?")) {
+            int ret = CourseManager.deleteCourseById(courseTableElem.getCourseId());
+            if (ret == 1) {
+                //flCourses.remove(courseTableElem);
+                flCourses.getSource().remove(courseTableElem);
+                courseTableView.setItems(flCourses);
+            } else if (ret == 0)
+                Utils.showErrorDialog("Error Dialog", "", "A registration already exists for this course. So, the course can't be deleted");
+            else
+                Utils.showErrorDialog("Error Dialog", "Contact the administrator", "Some error occurred. Can't delete this course. ");
             }
-        }
+        }else
+            Utils.showErrorDialog("Error Dialog", "", "No course selected");
     }
 
 }

@@ -9,6 +9,7 @@ import com.varun.db.managers.StudentManager;
 import com.varun.db.models.RegistrationEntity;
 import com.varun.db.models.StudentEntity;
 import com.varun.fxmlmodels.RegistrationTableElem;
+import com.varun.fxmlmodels.StudentTableElem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -30,7 +31,8 @@ public class AddUpdateStudentSceneController {
 
     private static final String EMAIL_REGEX = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
     private StudentEntity studentEntity;
-    @FXML TableView registrationTableView;
+    private int studentId;
+    @FXML TableView<RegistrationTableElem> registrationTableView;
     @FXML private ScrollPane scrollPane;
     @FXML private Label studentIdLabel;
     @FXML private TextField studentFNameTextField, studentMNameTextField, studentLNameTextField;
@@ -86,9 +88,12 @@ public class AddUpdateStudentSceneController {
         });
     }
 
-    private void fillScene() throws IOException{
-        if(studentEntity != null){
+    private void fillScene(){
+        if(studentId != -1){
             //student already exists and is here to be modified
+
+            // always get fresh student with registrations for the db for the student
+            studentEntity = StudentManager.getStudentWithRegistrationsFromId(studentId);
             studentIdLabel.setText(Integer.toString(studentEntity.getStudentId()));
             studentFNameTextField.setText(studentEntity.getStudentFName());
             studentMNameTextField.setText(studentEntity.getStudentMName());
@@ -103,8 +108,6 @@ public class AddUpdateStudentSceneController {
             studentEmailTextField.setText(studentEntity.getStudentEmail());
             List<RegistrationEntity> registrationEntities;
             Iterator<RegistrationEntity> registrationEntityIterator;
-            // always get fresh registrations for the db for the student
-            studentEntity = StudentManager.getStudentWithRegistrationsFromEntity(studentEntity);
             registrationEntities = (List) studentEntity.getRegistrationsByStudentId();
             for(int i = 0; i < registrationEntities.size(); i++){
                 RegistrationEntity registrationEntity = registrationEntities.get(i);
@@ -126,7 +129,7 @@ public class AddUpdateStudentSceneController {
         }
     }
 
-    public static AddUpdateStudentSceneController display(String previousSceneName, Scene previousScene, StudentEntity studentEntity) throws IOException {
+    public static AddUpdateStudentSceneController display(String previousSceneName, Scene previousScene, int studentId) throws IOException {
         //This scene can be called either by SutdentDetails scene or after addn/updatn of a registration ie AddUpdateRegistrationScene
 
         if(previousSceneName.equals(ParameterStrings.studentDetailsString))
@@ -138,7 +141,7 @@ public class AddUpdateStudentSceneController {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("AddUpdateStudentScene" + ".fxml"));
         Parent parent = fxmlLoader.load();
         AddUpdateStudentSceneController addUpdateStudentSceneController = fxmlLoader.getController();
-        addUpdateStudentSceneController.setStudentEntity(studentEntity);
+        addUpdateStudentSceneController.setStudentId(studentId);
         addUpdateStudentSceneController.fillScene();
         Scene newScene = new Scene(parent);
         newScene.setRoot(parent);
@@ -148,6 +151,27 @@ public class AddUpdateStudentSceneController {
         return addUpdateStudentSceneController;
     }
 
+
+    @FXML
+    private void onDeleteRegistrationButtonClicked(){
+        RegistrationTableElem registrationTableElem = registrationTableView.getSelectionModel().getSelectedItem();
+        if(registrationTableElem != null) {
+            if(Utils.showsConfirmDialog("", "Are you sure you want to delete this registration ?")) {
+                int ret = RegistrationManager.deleteRegistrationById(registrationTableElem.getRegistrationId());
+                if (ret == 1) {
+                    //flCourses.remove(courseTableElem);
+                    ObservableList<RegistrationTableElem> registrationTableElems = registrationTableView.getItems();
+                    registrationTableElems.remove(registrationTableElem);
+                    registrationTableView.setItems(registrationTableElems);
+                } else if (ret == 0)
+                    Utils.showErrorDialog("Error Dialog", "", "An installment already exists for this registration. So, the registration can't be deleted");
+                else
+                    Utils.showErrorDialog("Error Dialog", "Contact the administrator", "Some error occurred. Can't delete this registration.");
+            }
+        }else{
+            Utils.showErrorDialog("Error Dialog", "", "No registration selected");
+        }
+    }
     //this function will only be called when a student already exists in the db
     @FXML
     private void onAddRegistrationButtonClicked() throws IOException{
@@ -238,7 +262,7 @@ public class AddUpdateStudentSceneController {
         Utils.homeButtonFunctionality();
     }
 
-    public void setStudentEntity(StudentEntity studentEntity) {
-        this.studentEntity = studentEntity;
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
 }

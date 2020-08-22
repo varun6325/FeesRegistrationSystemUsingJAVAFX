@@ -64,9 +64,7 @@ public class StudentDetailsSceneController {
                     StudentTableElem rowData = row.getItem();
                     System.out.println("Double click on: "+rowData.getStudentName());
                     try {
-                        //registrations will be captured from the db later. they are lazily initialized
-                        StudentEntity studentEntity = StudentManager.getStudentWithoutRegistrationsFromId(rowData.getStudentId());
-                        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), studentEntity);
+                        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), rowData.getStudentId());
                     }catch(IOException ex){
                         System.out.println(ex);
                     }
@@ -144,9 +142,9 @@ public class StudentDetailsSceneController {
     }
     @FXML
     private void onDeleteStudentButtonClicked() throws IOException {
-        if(Utils.showsConfirmDialog("", "Are you sure you want to delete this student ?")) {
-            StudentTableElem studentTableElem = studentTableView.getSelectionModel().getSelectedItem();
-            if(studentTableElem != null) {
+        StudentTableElem studentTableElem = studentTableView.getSelectionModel().getSelectedItem();
+        if(studentTableElem != null) {
+            if(Utils.showsConfirmDialog("", "Are you sure you want to delete this student ?")) {
                 int ret = StudentManager.deleteStudentById(studentTableElem.getStudentId());
                 if (ret == 1) {
                     //flCourses.remove(courseTableElem);
@@ -157,10 +155,12 @@ public class StudentDetailsSceneController {
                 else
                     Utils.showErrorDialog("Error Dialog", "Contact the administrator", "Some error occurred. Can't delete this student. ");
             }
+        }else{
+            Utils.showErrorDialog("Error Dialog", "", "No student selected");
         }
     }
     @FXML
     private void onAddStudentButtonClicked() throws IOException{
-        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), null);
+        AddUpdateStudentSceneController.display(ParameterStrings.studentDetailsString, studentTableView.getScene(), -1);
     }
 }

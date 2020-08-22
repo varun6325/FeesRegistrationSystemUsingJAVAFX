@@ -57,10 +57,10 @@ public class RegistrationManager {
         try {
             entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
             entityManager.getTransaction().begin();
-            Query query = entityManager.createQuery("DELETE FROM RegistrationEntity r WHERE r.registrationId = :id");
-            int delCount = query.setParameter("id", id).executeUpdate();
+            RegistrationEntity res = entityManager.find(RegistrationEntity.class, id);
+            entityManager.remove(res);
             entityManager.getTransaction().commit();
-            System.out.println(delCount + " no of registrations deleted with respect to course id : " + id);
+            System.out.println("Registration deleted with respect to registration id : " + id);
             return 1;
         }catch(Exception ex){
             if(entityManager != null && entityManager.getTransaction().isActive())

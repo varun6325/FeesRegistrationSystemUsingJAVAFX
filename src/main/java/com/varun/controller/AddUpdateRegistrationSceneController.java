@@ -274,7 +274,7 @@ public class AddUpdateRegistrationSceneController {
             //studentEntity = StudentManager.updateStudent(studentEntity);
         }
         if(previousSceneName.equals(ParameterStrings.addUpdateStudentString))
-            AddUpdateStudentSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene(), studentEntity);
+            AddUpdateStudentSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene(), studentEntity.getStudentId());
         else if(previousSceneName.equals(ParameterStrings.notificationString))
             NotificationSceneController.display(ParameterStrings.addUpdateRegistrationString, addInstallmentButton.getScene());
         else
